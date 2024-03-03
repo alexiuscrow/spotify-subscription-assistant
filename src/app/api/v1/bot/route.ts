@@ -9,4 +9,4 @@ bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот з�
 
 bot.on('message', ctx => ctx.reply('Отримав ще одне повідомлення!'));
 
-export default webhookCallback(bot, 'http');
+export default webhookCallback(bot, 'next-js');
