@@ -1,15 +1,11 @@
-import {
-	PgColumnBuilder,
-	pgTable,
-	serial,
-	text,
-	pgEnum,
-	bigint
-} from 'drizzle-orm/pg-core';
+// noinspection TypeScriptValidateTypes
+
+import { pgTable, serial, text, pgEnum, bigint } from 'drizzle-orm/pg-core';
 
 export const userRoleEnum = pgEnum('user_role', ['regular', 'admin']);
 export const userStatusEnum = pgEnum('user_status', ['active', 'canceled']);
-export const user = pgTable('user', <Record<string, PgColumnBuilder>>{
+
+export const user = pgTable('user', {
 	id: serial('id').primaryKey(),
 	telegramId: bigint('telegram_id', { mode: 'number' }).notNull().unique(),
 	username: text('username'),
