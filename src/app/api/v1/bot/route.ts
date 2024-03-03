@@ -1,7 +1,7 @@
-// import { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 import { Bot, webhookCallback } from 'grammy';
 
-export const POST = async (req: Request, ...args: any[]) => {
+export const POST = async (req: NextRequest, ...args: any[]) => {
 	const token = process.env.TELEGRAM_TOKEN;
 	if (!token) throw new Error('TELEGRAM_TOKEN is unset');
 
@@ -11,8 +11,7 @@ export const POST = async (req: Request, ...args: any[]) => {
 
 	bot.on('message', ctx => ctx.reply('Отримав ще одне повідомлення!'));
 
-	// const handleUpdate = webhookCallback(bot, 'std/http', 'throw', 10000);
-	const handleUpdate = webhookCallback(bot, 'next-js');
+	const handleUpdate = webhookCallback(bot, 'std/http', 'throw', 10000);
 
 	return handleUpdate(req, ...args);
 };
