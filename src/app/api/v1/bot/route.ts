@@ -11,5 +11,7 @@ export const POST = async (req: NextRequest, ...args: any[]) => {
 
 	bot.on('message', ctx => ctx.reply('Отримав ще одне повідомлення!'));
 
-	return await webhookCallback(bot, 'std/http')(req, ...args);
+	const handleUpdate = webhookCallback(bot, 'next-js');
+
+	return handleUpdate(req, ...args);
 };
