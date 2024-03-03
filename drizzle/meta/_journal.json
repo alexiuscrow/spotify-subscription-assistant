@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709479352604,
+      "tag": "0000_silky_echo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1709481050955,
+      "tag": "0001_luxuriant_maggott",
+      "breakpoints": true
+    }
+  ]
+}
