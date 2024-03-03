@@ -1,5 +1,5 @@
 import { decimal, integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
-import { subscriber } from '@/store/schema/subscriber';
+import { subscriber } from './subscriber';
 
 // noinspection TypeScriptValidateTypes
 export const payment = pgTable('payment', {
