@@ -13,5 +13,5 @@ export const POST = async (req: Request, ...args: any[]) => {
 
 	const handleUpdate = webhookCallback(bot, 'next-js');
 
-	return handleUpdate(req, ...args);
+	return await handleUpdate(req, ...args);
 };
