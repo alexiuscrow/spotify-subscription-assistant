@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { Bot, webhookCallback } from 'grammy';
-import { ReactionTypeEmoji as RTE } from '@grammyjs/types';
+import { type ReactionTypeEmoji } from '@grammyjs/types';
 
 export const POST = async (req: NextRequest, ...args: any[]) => {
 	const token = process.env.TELEGRAM_TOKEN;
@@ -11,7 +11,6 @@ export const POST = async (req: NextRequest, ...args: any[]) => {
 	bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот запущений.'));
 
 	bot.on('message', async ctx => {
-		const emojis = RTE['emoji'];
 		const emoji = emojis[Math.floor(Math.random() * emojis.length)];
 		await ctx.react(emoji);
 		return ctx.reply('Отримав ще одне повідомлення!');
@@ -21,3 +20,79 @@ export const POST = async (req: NextRequest, ...args: any[]) => {
 
 	return handleUpdate(req, ...args);
 };
+
+const emojis: ReactionTypeEmoji['emoji'][] = [
+	'👍',
+	'👎',
+	'❤',
+	'🔥',
+	'🥰',
+	'👏',
+	'😁',
+	'🤔',
+	'🤯',
+	'😱',
+	'🤬',
+	'😢',
+	'🎉',
+	'🤩',
+	'🤮',
+	'💩',
+	'🙏',
+	'👌',
+	'🕊',
+	'🤡',
+	'🥱',
+	'🥴',
+	'😍',
+	'🐳',
+	'❤‍🔥',
+	'🌚',
+	'🌭',
+	'💯',
+	'🤣',
+	'⚡',
+	'🍌',
+	'🏆',
+	'💔',
+	'🤨',
+	'😐',
+	'🍓',
+	'🍾',
+	'💋',
+	'🖕',
+	'😈',
+	'😴',
+	'😭',
+	'🤓',
+	'👻',
+	'👨‍💻',
+	'👀',
+	'🎃',
+	'🙈',
+	'😇',
+	'😨',
+	'🤝',
+	'✍',
+	'🤗',
+	'🫡',
+	'🎅',
+	'🎄',
+	'☃',
+	'💅',
+	'🤪',
+	'🗿',
+	'🆒',
+	'💘',
+	'🙉',
+	'🦄',
+	'😘',
+	'💊',
+	'🙊',
+	'😎',
+	'👾',
+	'🤷‍♂',
+	'🤷',
+	'🤷‍♀',
+	'😡'
+];
