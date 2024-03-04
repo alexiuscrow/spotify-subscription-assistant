@@ -11,7 +11,7 @@ bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот з�
 bot.on('message', async ctx => {
 	const emoji = emojis[Math.floor(Math.random() * emojis.length)];
 	await ctx.react(emoji);
-	return ctx.reply('Отримав ще одне повідомлення!');
+	return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
 });
 
 export const POST = webhookCallback(bot, 'std/http');
