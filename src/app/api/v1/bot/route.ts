@@ -7,6 +7,11 @@ const bot = new Bot(token);
 
 bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот запущений.'));
 
+await bot.api.setMyCommands([
+	{ command: 'start', description: 'Запустити бота' },
+	{ command: 'help', description: 'Показати довідку' }
+]);
+
 bot.on('msg:text').filter(
 	async ctx => ctx.senderChat === undefined, // Regular messages sent by `ctx.from`
 	async ctx => {
