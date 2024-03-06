@@ -12,7 +12,7 @@ bot.on('message', async ctx => {
 	const emoji = emojis[Math.floor(Math.random() * emojis.length)];
 	console.log('Message ->', ctx.message);
 	// await ctx.react(emoji);
-	return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
+	// return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
 });
 
 export const POST = webhookCallback(bot, 'std/http');
