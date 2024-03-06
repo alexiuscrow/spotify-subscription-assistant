@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
 		if (invoiceStatement.description === expectedDescription) {
 			const subscription = await db.query.subscription.findFirst({
-				where: eq(subscriptionTable.name, process.env.SUBSCRIPTION_NAME)
+				where: eq(subscriptionTable.name, process.env.SUBSCRIPTION_NAME as string)
 			});
 			if (subscription) {
 				type NewInvoice = typeof invoice.$inferSelect;
