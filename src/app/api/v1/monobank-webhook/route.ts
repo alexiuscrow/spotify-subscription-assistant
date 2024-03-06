@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 					createdAt: new Date(invoiceStatement.time * dateConvertor)
 				} as NewInvoice);
 
-				console.log('New invoice created: ');
+				console.log('New invoice created. Amount:', invoiceStatement.amount / amountConvertor);
 			} else {
 				console.error('Subscription not found');
 			}
