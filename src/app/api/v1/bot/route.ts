@@ -5,12 +5,14 @@ if (!token) throw new Error('TELEGRAM_TOKEN is unset');
 
 const bot = new Bot(token);
 
-bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот запущений.'));
+bot.command('start', async ctx => {
+	await bot.api.setMyCommands([
+		{ command: 'start', description: 'Запустити бота' },
+		{ command: 'help', description: 'Показати довідку' }
+	]);
 
-await bot.api.setMyCommands([
-	{ command: 'start', description: 'Запустити бота' },
-	{ command: 'help', description: 'Показати довідку' }
-]);
+	return ctx.reply('Ласкаво просимо! Бот запущений.');
+});
 
 bot.on('msg:text').filter(
 	async ctx => ctx.senderChat === undefined, // Regular messages sent by `ctx.from`
