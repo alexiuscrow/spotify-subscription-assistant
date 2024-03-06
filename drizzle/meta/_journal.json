@@ -15,6 +15,13 @@
       "when": 1709481050955,
       "tag": "0001_luxuriant_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709750447746,
+      "tag": "0002_chemical_harry_osborn",
+      "breakpoints": true
     }
   ]
 }
