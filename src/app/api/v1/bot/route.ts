@@ -7,11 +7,13 @@ const bot = new Bot(token);
 
 bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот запущений.'));
 
-bot.on('msg:text', async ctx => {
-	console.log('Message ->', ctx.msg);
-	await ctx.reply(ctx.msg.text);
-	// return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
-});
+bot.on('msg:text').filter(
+	async ctx => ctx.senderChat === undefined, // Regular messages sent by `ctx.from`
+	async ctx => {
+		console.log('Message ->', ctx.msg);
+		await ctx.reply(ctx.msg.text);
+	}
+);
 
 bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 
