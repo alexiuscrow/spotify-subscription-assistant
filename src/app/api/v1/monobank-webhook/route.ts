@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
 				const dateConvertor = 1_000;
 
 				await db.insert(invoice).values({
-					amount: invoiceStatement.amount / amountConvertor,
-					operationAmount: invoiceStatement.operationAmount / amountConvertor,
+					amount: String(invoiceStatement.amount / amountConvertor),
+					operationAmount: String(invoiceStatement.operationAmount / amountConvertor),
 					currencyCode: invoiceStatement.currencyCode,
 					subscriptionId: subscription.id,
 					createdAt: new Date(invoiceStatement.time * dateConvertor)
