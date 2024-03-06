@@ -9,7 +9,7 @@ bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот з�
 
 bot.on('msg:text', async ctx => {
 	console.log('Message ->', ctx.msg);
-	await ctx.react(ctx.msg.text);
+	await ctx.reply(ctx.msg.text);
 	// return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
 });
 
