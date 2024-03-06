@@ -1,5 +1,4 @@
 import { Bot, webhookCallback } from 'grammy';
-import { type ReactionTypeEmoji } from '@grammyjs/types';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) throw new Error('TELEGRAM_TOKEN is unset');
@@ -8,87 +7,12 @@ const bot = new Bot(token);
 
 bot.command('start', ctx => ctx.reply('Ласкаво просимо! Бот запущений.'));
 
-bot.on('message', async ctx => {
-	const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-	console.log('Message ->', ctx.message);
-	// await ctx.react(emoji);
+bot.on('msg:text', async ctx => {
+	console.log('Message ->', ctx.msg);
+	await ctx.react(ctx.msg.text);
 	// return ctx.reply('Я відповів на ваше повідомлення з реакцією!');
 });
 
-export const POST = webhookCallback(bot, 'std/http');
+bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 
-const emojis: ReactionTypeEmoji['emoji'][] = [
-	'👍',
-	'👎',
-	'❤',
-	'🔥',
-	'🥰',
-	'👏',
-	'😁',
-	'🤔',
-	'🤯',
-	'😱',
-	'🤬',
-	'😢',
-	'🎉',
-	'🤩',
-	'🤮',
-	'💩',
-	'🙏',
-	'👌',
-	'🕊',
-	'🤡',
-	'🥱',
-	'🥴',
-	'😍',
-	'🐳',
-	'❤‍🔥',
-	'🌚',
-	'🌭',
-	'💯',
-	'🤣',
-	'⚡',
-	'🍌',
-	'🏆',
-	'💔',
-	'🤨',
-	'😐',
-	'🍓',
-	'🍾',
-	'💋',
-	'🖕',
-	'😈',
-	'😴',
-	'😭',
-	'🤓',
-	'👻',
-	'👨‍💻',
-	'👀',
-	'🎃',
-	'🙈',
-	'😇',
-	'😨',
-	'🤝',
-	'✍',
-	'🤗',
-	'🫡',
-	'🎅',
-	'🎄',
-	'☃',
-	'💅',
-	'🤪',
-	'🗿',
-	'🆒',
-	'💘',
-	'🙉',
-	'🦄',
-	'😘',
-	'💊',
-	'🙊',
-	'😎',
-	'👾',
-	'🤷‍♂',
-	'🤷',
-	'🤷‍♀',
-	'😡'
-];
+export const POST = webhookCallback(bot, 'std/http');
