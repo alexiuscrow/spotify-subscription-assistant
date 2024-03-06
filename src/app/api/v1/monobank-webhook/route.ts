@@ -19,13 +19,14 @@ export async function POST(request: NextRequest) {
 			if (subscription) {
 				type NewInvoice = typeof invoice.$inferSelect;
 				const amountConvertor = -100;
+				const dateConvertor = 1_000;
 
 				await db.insert(invoice).values({
 					amount: invoiceStatement.amount / amountConvertor,
 					operationAmount: invoiceStatement.operationAmount / amountConvertor,
 					currencyCode: invoiceStatement.currencyCode,
 					subscriptionId: subscription.id,
-					createdAt: invoiceStatement.time
+					createdAt: new Date(invoiceStatement.time * dateConvertor)
 				} as NewInvoice);
 
 				console.log('New invoice created: ');
