@@ -31,12 +31,14 @@ const authenticator: Middleware = async (ctx, next) => {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
+			const isAdmin = currentTelegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 			type NewUser = typeof user.$inferInsert;
 			await db.insert(user).values({
 				telegramId: currentTelegramUser.id,
 				firstName: currentTelegramUser.first_name,
 				lastName: currentTelegramUser.last_name,
-				username: currentTelegramUser.username
+				username: currentTelegramUser.username,
+				role: isAdmin ? 'admin' : 'regular'
 			} as NewUser);
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
