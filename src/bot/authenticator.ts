@@ -1,7 +1,7 @@
 import { Middleware } from 'grammy';
 import { db } from '@/store/db';
 import { allowedUserCriteria, user } from '@/store/schema';
-import { and, eq, exists, notExists, sql } from 'drizzle-orm';
+import { and, eq, exists, notExists, or, sql } from 'drizzle-orm';
 
 const authenticator: Middleware = async (ctx, next) => {
 	if (!ctx.from) {
@@ -13,16 +13,23 @@ const authenticator: Middleware = async (ctx, next) => {
 	const storedUser = await db.query.user.findFirst({ where: eq(user.telegramId, currentTelegramUser.id) });
 
 	if (!storedUser) {
-		const firstName = currentTelegramUser.first_name;
 		const { rows } = await db.execute(
-			sql<boolean>`select ${and(
+			sql<boolean>`select ${or(
 				exists(
 					db
 						.select({ id: allowedUserCriteria.id })
 						.from(allowedUserCriteria)
-						.where(eq(allowedUserCriteria.firstName, firstName))
+						.where(eq(allowedUserCriteria.telegramId, currentTelegramUser.id))
 				),
-				notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, firstName)))
+				and(
+					exists(
+						db
+							.select({ id: allowedUserCriteria.id })
+							.from(allowedUserCriteria)
+							.where(eq(allowedUserCriteria.firstName, currentTelegramUser.first_name))
+					),
+					notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, currentTelegramUser.first_name)))
+				)
 			)} as result`
 		);
 		const meetsCriteria = rows[0].result as boolean;
