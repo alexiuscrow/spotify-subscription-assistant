@@ -10,7 +10,7 @@ const invoicesCommand: Middleware = async ctx => {
 	}
 	const responseMsg = lines.join('  \n');
 
-	await ctx.reply(responseMsg);
+	await ctx.reply(responseMsg, { parse_mode: 'MarkdownV2' });
 };
 
 export default invoicesCommand;
