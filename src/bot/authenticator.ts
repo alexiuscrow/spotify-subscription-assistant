@@ -15,15 +15,17 @@ const authenticator: Middleware = async (ctx, next) => {
 
 	if (!storedUser) {
 		const firstName = currentTelegramUser.first_name;
-		const meetsCriteria = await sql<boolean>`select ${and(
-			exists(
-				db
-					.select({ id: allowedUserCriteria.id })
-					.from(allowedUserCriteria)
-					.where(eq(allowedUserCriteria.firstName, firstName))
-			),
-			notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, firstName)))
-		)}`;
+		const meetsCriteria = await db.execute(
+			sql<boolean>`select ${and(
+				exists(
+					db
+						.select({ id: allowedUserCriteria.id })
+						.from(allowedUserCriteria)
+						.where(eq(allowedUserCriteria.firstName, firstName))
+				),
+				notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, firstName)))
+			)}`
+		);
 
 		await ctx.reply(inspect(meetsCriteria));
 	}
