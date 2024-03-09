@@ -1,7 +1,7 @@
 import { Middleware } from 'grammy';
 import { db } from '@/store/db';
 import { allowedUserCriteria, user } from '@/store/schema';
-import { and, eq, exists, notExists, or, sql } from 'drizzle-orm';
+import { and, eq, exists, notExists, sql } from 'drizzle-orm';
 
 const authenticator: Middleware = async (ctx, next) => {
 	if (!ctx.from) {
@@ -14,23 +14,20 @@ const authenticator: Middleware = async (ctx, next) => {
 
 	if (!storedUser) {
 		const { rows } = await db.execute(
-			sql<boolean>`select ${or(
+			sql<boolean>`select case when ${exists(
+				db
+					.select({ id: allowedUserCriteria.id })
+					.from(allowedUserCriteria)
+					.where(eq(allowedUserCriteria.telegramId, currentTelegramUser.id))
+			)} then true when ${and(
 				exists(
 					db
 						.select({ id: allowedUserCriteria.id })
 						.from(allowedUserCriteria)
-						.where(eq(allowedUserCriteria.telegramId, currentTelegramUser.id))
+						.where(eq(allowedUserCriteria.firstName, currentTelegramUser.first_name))
 				),
-				and(
-					exists(
-						db
-							.select({ id: allowedUserCriteria.id })
-							.from(allowedUserCriteria)
-							.where(eq(allowedUserCriteria.firstName, currentTelegramUser.first_name))
-					),
-					notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, currentTelegramUser.first_name)))
-				)
-			)} as result`
+				notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, currentTelegramUser.first_name)))
+			)} then true else false end as result`
 		);
 		const meetsCriteria = rows[0].result as boolean;
 
