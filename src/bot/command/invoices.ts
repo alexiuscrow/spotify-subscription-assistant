@@ -1,11 +1,16 @@
 import { Middleware } from 'grammy';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
-import { inspect } from 'node:util';
 
 const invoicesCommand: Middleware = async ctx => {
-	const invoices = await invoiceRepo.getInvoices();
-	console.log(invoices);
-	await ctx.reply(inspect(invoices));
+	const limit = 5;
+	const invoices = await invoiceRepo.getInvoices(limit, 1);
+	const lines: string[] = [`**Останні ${limit} платежів:**`, ''];
+	for (const invoice of invoices) {
+		lines.push(`*${invoice.createdAt}* — ${invoice.amount} грн`);
+	}
+	const responseMsg = lines.join('  \n');
+
+	await ctx.reply(responseMsg);
 };
 
 export default invoicesCommand;
