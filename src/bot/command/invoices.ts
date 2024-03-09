@@ -10,7 +10,7 @@ const invoicesCommand: Middleware = async ctx => {
 	for (const invoice of invoices) {
 		const dateString = DateTime.fromJSDate(invoice.createdAt)
 			.setZone(process.env.LUXON_ZONE_NAME as string)
-			.toFormat('dd/LL/yy, HH:mm' + ' ZZZZ');
+			.toFormat('dd/LL/yy, HH:mm');
 		lines.push(`${markdownv2.italic(markdownv2.escape(dateString))} — ${markdownv2.escape(invoice.amount)} грн`);
 	}
 	const responseMsg = lines.join('  \n');
