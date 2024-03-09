@@ -13,6 +13,7 @@ const authenticator: Middleware = async (ctx, next) => {
 	const storedUser = await db.query.user.findFirst({ where: eq(user.telegramId, currentTelegramUser.id) });
 
 	if (!storedUser) {
+		console.log('User not found');
 		const { rows } = await db.execute(
 			sql<boolean>`select case when ${exists(
 				db
@@ -30,11 +31,14 @@ const authenticator: Middleware = async (ctx, next) => {
 			)} then true else false end as result`
 		);
 		const meetsCriteria = rows[0].result as boolean;
+		console.log('Meets criteria:', meetsCriteria);
 
 		if (!meetsCriteria) {
+			console.log('User not allowed');
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
+			console.log('User allowed');
 			const isAdmin = currentTelegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 			type NewUser = typeof user.$inferInsert;
 			await db.insert(user).values({
@@ -48,8 +52,11 @@ const authenticator: Middleware = async (ctx, next) => {
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
 		}
 	} else if (storedUser.status === 'canceled') {
+		console.log('User canceled');
 		await db.update(user).set({ status: 'active' }).where(eq(user.id, storedUser.id));
 		await ctx.reply('Ви відновили свій статус. З поверненням!');
+	} else {
+		console.log('User found');
 	}
 
 	await next();
