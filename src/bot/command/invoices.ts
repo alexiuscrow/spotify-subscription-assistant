@@ -8,7 +8,7 @@ const invoicesCommand: Middleware = async ctx => {
 	const lines: string[] = [`**Останні ${limit} платежів:**`, ''];
 	for (const invoice of invoices) {
 		const dateString = DateTime.fromJSDate(invoice.createdAt).toFormat('dd/LL/yyyy, HH:mm ZZZZ');
-		lines.push(`*${dateString}* — ${invoice.amount} грн`);
+		lines.push(`*${dateString}* — ${invoice.amount.replace('.', '.')} грн`);
 	}
 	const responseMsg = lines.join('  \n');
 
