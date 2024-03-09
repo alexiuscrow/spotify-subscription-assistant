@@ -27,7 +27,7 @@ const authenticator: Middleware = async (ctx, next) => {
 		);
 		const meetsCriteria = rows[0].result;
 
-		await ctx.reply(meetsCriteria);
+		await ctx.reply(String(meetsCriteria));
 	}
 
 	await next();
