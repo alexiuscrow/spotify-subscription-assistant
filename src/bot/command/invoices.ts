@@ -9,7 +9,7 @@ const invoicesCommand: Middleware = async ctx => {
 	const lines: string[] = [markdownv2.bold(`Останні ${limit} платежів:`), ''];
 	for (const invoice of invoices) {
 		const dateString = DateTime.fromJSDate(invoice.createdAt)
-			.setLocale(process.env.LUXON_LOCALE)
+			.setLocale(process.env.LUXON_LOCALE as string)
 			.toFormat('dd/LL/yyyy, HH:mm' + ' ZZZZ');
 		lines.push(`${markdownv2.italic(dateString)} — ${markdownv2.escape(invoice.amount)} грн`);
 	}
