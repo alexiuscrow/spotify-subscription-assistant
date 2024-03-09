@@ -2,6 +2,7 @@ import { Middleware } from 'grammy';
 import { db } from '@/store/db';
 import { allowedUserCriteria, user } from '@/store/schema';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
+import { inspect } from 'node:util';
 
 const authenticator: Middleware = async (ctx, next) => {
 	if (!ctx.from) {
@@ -24,7 +25,7 @@ const authenticator: Middleware = async (ctx, next) => {
 			notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, firstName)))
 		)}`;
 
-		await ctx.reply(meetsCriteria.toString());
+		await ctx.reply(inspect(meetsCriteria));
 	}
 
 	await next();
