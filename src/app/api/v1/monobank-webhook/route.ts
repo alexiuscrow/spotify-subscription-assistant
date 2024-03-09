@@ -1,35 +1,22 @@
 import { NextRequest } from 'next/server';
-import { MonobankEvent, StatementItem } from '@/@types/monobank';
-import { db } from '@/store/db';
-import { invoice, subscription as subscriptionTable } from '@/store/schema';
-import { eq } from 'drizzle-orm';
+import { MonobankEvent, StatementItem, StatementItemWithAccount } from '@/@types/monobank';
+import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
+import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 
 export async function POST(request: NextRequest) {
 	const json = await request.json();
 
 	if (json?.type === 'StatementItem' && !!json.data?.statementItem) {
-		const statementItemEvent = json as MonobankEvent<StatementItem>;
+		const statementItemEvent = json as MonobankEvent<StatementItemWithAccount>;
 		const invoiceStatement = statementItemEvent.data.statementItem;
 		const expectedDescription = process.env.SUBSCRIPTION_INVOICE_STATEMENT_DESCRIPTION;
 
 		if (invoiceStatement.description === expectedDescription) {
-			const subscription = await db.query.subscription.findFirst({
-				where: eq(subscriptionTable.name, process.env.SUBSCRIPTION_NAME as string)
-			});
+			const subscription = await subscriptionRepo.getSubscription();
 			if (subscription) {
-				type NewInvoice = typeof invoice.$inferSelect;
-				const amountConvertor = -100;
-				const dateConvertor = 1_000;
+				const { amount } = await invoiceRepo.createInvoice(invoiceStatement, subscription.id);
 
-				await db.insert(invoice).values({
-					amount: String(invoiceStatement.amount / amountConvertor),
-					operationAmount: String(invoiceStatement.operationAmount / amountConvertor),
-					currencyCode: invoiceStatement.currencyCode,
-					subscriptionId: subscription.id,
-					createdAt: new Date(invoiceStatement.time * dateConvertor)
-				} as NewInvoice);
-
-				console.log('New invoice created. Amount:', invoiceStatement.amount / amountConvertor);
+				console.log('New invoice created. Amount:', amount);
 			} else {
 				console.error('Subscription not found');
 			}
