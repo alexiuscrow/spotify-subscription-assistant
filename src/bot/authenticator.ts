@@ -25,9 +25,25 @@ const authenticator: Middleware = async (ctx, next) => {
 				notExists(db.select({ id: user.id }).from(user).where(eq(user.firstName, firstName)))
 			)} as result`
 		);
-		const meetsCriteria = rows[0].result;
+		const meetsCriteria = rows[0].result as boolean;
 
-		await ctx.reply(String(meetsCriteria));
+		if (!meetsCriteria) {
+			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
+			return;
+		} else {
+			type NewUser = typeof user.$inferInsert;
+			await db.insert(user).values({
+				telegramId: currentTelegramUser.id,
+				firstName: currentTelegramUser.first_name,
+				lastName: currentTelegramUser.last_name,
+				username: currentTelegramUser.username
+			} as NewUser);
+
+			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
+		}
+	} else if (storedUser.status === 'canceled') {
+		await db.update(user).set({ status: 'active' }).where(eq(user.id, storedUser.id));
+		await ctx.reply('Ви відновили свій статус. З поверненням!');
 	}
 
 	await next();
