@@ -9,7 +9,7 @@ const bot = new Bot(token);
 
 bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 
-// bot.use(authenticator);
+bot.use(authenticator);
 bot.use(commands);
 
 // TODO: add logger
