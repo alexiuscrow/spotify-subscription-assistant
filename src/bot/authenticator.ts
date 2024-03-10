@@ -1,7 +1,8 @@
 import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
+import BotContext from '@/bot/BotContext';
 
-const authenticator: Middleware = async (ctx, next) => {
+const authenticator: Middleware<BotContext> = async (ctx, next) => {
 	if (!ctx.from) {
 		await ctx.reply('Вибачте, але я не можу знайти ваш профіль.');
 		return;

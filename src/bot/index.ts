@@ -2,11 +2,12 @@ import { Bot } from 'grammy';
 import commands from '@/bot/command';
 import authenticator from '@/bot/authenticator';
 import menuComposer from '@/bot/menu';
+import BotContext from '@/bot/BotContext';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) throw new Error('TELEGRAM_TOKEN is unset');
 
-const bot = new Bot(token);
+const bot = new Bot<BotContext>(token);
 
 bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 

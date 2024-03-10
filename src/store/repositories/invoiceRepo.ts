@@ -38,7 +38,7 @@ interface SearchInvoicesCriteria {
 	pageDirection?: SearchInvoicesPageDirection;
 }
 
-export const getInvoices = async (criteria: SearchInvoicesCriteria) => {
+export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 	const {
 		limit = 5,
 		page = 1,
@@ -65,6 +65,15 @@ export const getInvoices = async (criteria: SearchInvoicesCriteria) => {
 		const hasPrev =
 			pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
 
-		return { items, limit, page, total, hasNext, hasPrev };
+		return {
+			items,
+			pagination: {
+				limit,
+				page,
+				total,
+				hasNext,
+				hasPrev
+			}
+		};
 	});
 };

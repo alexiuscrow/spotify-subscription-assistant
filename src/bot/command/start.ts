@@ -1,6 +1,7 @@
 import { Middleware } from 'grammy';
+import BotContext from '@/bot/BotContext';
 
-const startCommand: Middleware = async ctx => {
+const startCommand: Middleware<BotContext> = async ctx => {
 	await ctx.api.setMyCommands([
 		{ command: 'invoices', description: 'Зписання за підписку' },
 		{ command: 'help', description: 'Показати довідку' }
