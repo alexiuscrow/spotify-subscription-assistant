@@ -2,12 +2,17 @@ import { MiddlewareFn } from 'grammy';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import { DateTime } from 'luxon';
 import { markdownv2 } from 'telegram-format';
-import invoiceMenu from '@/bot/menu/invoicePagination';
+import invoicePagination from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 
 const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
-	const { items, pagination } = await invoiceRepo.getInvoices({ limit: 10, page: ctx.invoice?.pagination?.page || 1 });
-	ctx.invoice = { pagination };
+	const sessionPagination = ctx.session.invoice.pagination;
+	const { items, pagination } = await invoiceRepo.getInvoices({
+		limit: sessionPagination.limit,
+		page: sessionPagination.page,
+		orderByColumns: sessionPagination.orderByColumns,
+		pageDirection: sessionPagination.pageDirection
+	});
 
 	const lines: string[] = [
 		markdownv2.bold(`Платежі за підписку`),
@@ -32,7 +37,7 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	await ctx.reply(responseMsg, {
 		parse_mode: 'MarkdownV2',
-		reply_markup: isPaginationMenuNeeded ? invoiceMenu : undefined
+		reply_markup: isPaginationMenuNeeded ? invoicePagination : undefined
 	});
 };
 

@@ -26,7 +26,7 @@ export const createInvoice = async (statementItem: StatementItem, subscriptionId
 	return insertedInvoices[firstItemIndex];
 };
 
-enum SearchInvoicesPageDirection {
+export enum SearchInvoicesPageDirection {
 	STRAIGHT,
 	REVERSE
 }
@@ -70,10 +70,34 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 			pagination: {
 				limit,
 				page,
+				orderByColumns,
 				total,
 				hasNext,
 				hasPrev
 			}
 		};
 	});
+};
+
+export const getAllowedInvoicePaginationOptions = async ({
+	limit,
+	page,
+	pageDirection
+}: Omit<SearchInvoicesCriteria, 'orderByColumns'>) => {
+	const firstIndex = 0;
+	const total = (await db.select({ value: count() }).from(invoiceSchema))[firstIndex].value;
+
+	const totalPages = Math.ceil(total / limit);
+
+	const straightDirection = {
+		hasNext: totalPages > page,
+		hasPrev: page > 1
+	};
+
+	const hasNext =
+		pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
+	const hasPrev =
+		pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
+
+	return { hasNext, hasPrev };
 };

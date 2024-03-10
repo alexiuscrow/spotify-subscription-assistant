@@ -1,23 +1,28 @@
 import { Menu } from '@grammyjs/menu';
 import BotContext from '@/bot/BotContext';
+import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import invoicesCommand from '@/bot/command/invoices';
 
-const invoiceMenu = new Menu<BotContext>('invoice-pagination').dynamic((ctx, range) => {
-	const pagination = ctx.invoice?.pagination;
-	if (!!pagination) {
-		if (pagination.hasPrev) {
-			pagination.page = pagination.page - 1;
-			range.text('⬅️ Попередні', (ctx: BotContext, next) =>
-				invoicesCommand({ ...ctx, invoice: { ...ctx.invoice, pagination } } as BotContext, next)
-			);
-		}
-		if (pagination.hasNext) {
-			pagination.page = pagination.page + 1;
-			range.text('Наступні ➡️', (ctx: BotContext, next) =>
-				invoicesCommand({ ...ctx, invoice: { ...ctx.invoice, pagination } } as BotContext, next)
-			);
-		}
+const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(async (ctx, range) => {
+	const pagination = ctx.session.invoice.pagination;
+	const { hasNext, hasPrev } = await invoiceRepo.getAllowedInvoicePaginationOptions({
+		limit: pagination.limit,
+		page: pagination.page,
+		pageDirection: pagination.pageDirection
+	});
+
+	if (hasPrev) {
+		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
+			ctx.session.invoice.pagination.page--;
+			return invoicesCommand(ctx, next);
+		});
+	}
+	if (hasNext) {
+		range.text('Наступні ➡️', (ctx: BotContext, next) => {
+			ctx.session.invoice.pagination.page++;
+			return invoicesCommand(ctx, next);
+		});
 	}
 });
 
-export default invoiceMenu;
+export default invoicePagination;

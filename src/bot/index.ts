@@ -1,8 +1,11 @@
-import { Bot } from 'grammy';
+import { Bot, session } from 'grammy';
 import commands from '@/bot/command';
 import authenticator from '@/bot/authenticator';
 import menuComposer from '@/bot/menu';
-import BotContext from '@/bot/BotContext';
+import BotContext, { SessionData } from '@/bot/BotContext';
+import { desc } from 'drizzle-orm';
+import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
+import { invoice as invoiceSchema } from '@/store/schema';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) throw new Error('TELEGRAM_TOKEN is unset');
@@ -10,6 +13,20 @@ if (!token) throw new Error('TELEGRAM_TOKEN is unset');
 const bot = new Bot<BotContext>(token);
 
 bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
+
+function initial(): SessionData {
+	return {
+		invoice: {
+			pagination: {
+				limit: 10,
+				page: 1,
+				orderByColumns: [desc(invoiceSchema.createdAt)],
+				pageDirection: SearchInvoicesPageDirection.REVERSE
+			}
+		}
+	};
+}
+bot.use(session({ initial }));
 
 bot.use(authenticator);
 bot.use(menuComposer);

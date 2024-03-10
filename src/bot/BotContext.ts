@@ -1,17 +1,21 @@
-import { Context } from 'grammy';
+import { Context, SessionFlavor } from 'grammy';
+import { PgColumn } from 'drizzle-orm/pg-core';
+import { SQL } from 'drizzle-orm';
+import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
 
 interface InvoiceContext {
-	pagination?: {
+	pagination: {
 		limit: number;
 		page: number;
-		hasNext: boolean;
-		hasPrev: boolean;
-		total: number;
+		orderByColumns: Array<PgColumn | SQL | SQL.Aliased>;
+		pageDirection: SearchInvoicesPageDirection;
 	};
 }
 
-type BotContext = Context & {
-	invoice?: InvoiceContext;
-};
+export interface SessionData {
+	invoice: InvoiceContext;
+}
+
+type BotContext = Context & SessionFlavor<SessionData>;
 
 export default BotContext;
