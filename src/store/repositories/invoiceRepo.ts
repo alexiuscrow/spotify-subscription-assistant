@@ -51,7 +51,7 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 		const dynamicQuery = query.$dynamic();
 		const items = await withPagination(dynamicQuery as PgSelect, limit, page, orderByColumns);
 		const firstIndex = 0;
-		const total = (await trx.select({ value: count() }).from(invoiceSchema))[firstIndex].value;
+		const total = (await trx.select({ total: count() }).from(invoiceSchema))[firstIndex].total;
 
 		const totalPages = Math.ceil(total / limit);
 
@@ -85,7 +85,7 @@ export const getAllowedInvoicePaginationOptions = async ({
 	pageDirection
 }: Required<Omit<SearchInvoicesCriteria, 'orderByColumns'>>) => {
 	const firstIndex = 0;
-	const total = (await db.select({ value: count() }).from(invoiceSchema))[firstIndex].value;
+	const total = (await db.select({ total: count() }).from(invoiceSchema))[firstIndex].total;
 
 	const totalPages = Math.ceil(total / limit);
 
