@@ -2,6 +2,7 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
 import { StatementItem } from '@/@types/monobank';
 import { withPagination } from '@/store/utils';
+import { desc } from 'drizzle-orm';
 
 export const createInvoice = async (statementItem: StatementItem, subscriptionId: number) => {
 	const amountConvertor = -100;
@@ -27,5 +28,5 @@ export const createInvoice = async (statementItem: StatementItem, subscriptionId
 export const getInvoices = async (limit = 5, page = 1) => {
 	const query = db.select().from(invoiceSchema);
 	const dynamicQuery = query.$dynamic();
-	return withPagination<typeof dynamicQuery>(dynamicQuery, limit, page, [invoiceSchema.createdAt]);
+	return withPagination<typeof dynamicQuery>(dynamicQuery, limit, page, [desc(invoiceSchema.createdAt)]);
 };
