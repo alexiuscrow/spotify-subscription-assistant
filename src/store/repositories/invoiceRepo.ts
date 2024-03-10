@@ -83,7 +83,7 @@ export const getAllowedInvoicePaginationOptions = async ({
 	limit,
 	page,
 	pageDirection
-}: Omit<SearchInvoicesCriteria, 'orderByColumns'>) => {
+}: Required<Omit<SearchInvoicesCriteria, 'orderByColumns'>>) => {
 	const firstIndex = 0;
 	const total = (await db.select({ value: count() }).from(invoiceSchema))[firstIndex].value;
 
