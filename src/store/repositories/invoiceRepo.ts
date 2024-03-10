@@ -26,23 +26,45 @@ export const createInvoice = async (statementItem: StatementItem, subscriptionId
 	return insertedInvoices[firstItemIndex];
 };
 
-// export const getInvoices = async (limit = 5, page = 1) => {
-// 	const query = db.select().from(invoiceSchema);
-// 	const dynamicQuery = query.$dynamic();
-// 	return withPagination<typeof dynamicQuery>(dynamicQuery, limit, page, [desc(invoiceSchema.createdAt)]);
-// };
+enum SearchInvoicesPageDirection {
+	STRAIGHT,
+	REVERSE
+}
 
-export const getInvoices = async (
-	limit = 5,
-	page = 1,
-	orderByColumns: Array<PgColumn | SQL | SQL.Aliased> = [desc(invoiceSchema.createdAt)]
-) => {
+interface SearchInvoicesCriteria {
+	limit?: number;
+	page?: number;
+	orderByColumns?: Array<PgColumn | SQL | SQL.Aliased>;
+	pageDirection?: SearchInvoicesPageDirection;
+}
+
+export const getInvoices = async (criteria: SearchInvoicesCriteria) => {
+	const {
+		limit = 5,
+		page = 1,
+		orderByColumns = [desc(invoiceSchema.createdAt)],
+		pageDirection = SearchInvoicesPageDirection.REVERSE
+	} = criteria;
+
 	return db.transaction(async trx => {
 		const query = trx.select().from(invoiceSchema);
 		const dynamicQuery = query.$dynamic();
 		const items = await withPagination(dynamicQuery as PgSelect, limit, page, orderByColumns);
-		const total = await trx.select({ value: count() }).from(invoiceSchema);
 		const firstIndex = 0;
-		return { items, limit, page, total: total[firstIndex].value };
+		const total = (await trx.select({ value: count() }).from(invoiceSchema))[firstIndex].value;
+
+		const totalPages = Math.ceil(total / limit);
+
+		const straightDirection = {
+			hasNext: totalPages > page,
+			hasPrev: page > 1
+		};
+
+		const hasNext =
+			pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
+		const hasPrev =
+			pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
+
+		return { items, limit, page, total, hasNext, hasPrev };
 	});
 };

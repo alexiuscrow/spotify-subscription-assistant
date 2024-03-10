@@ -4,9 +4,10 @@ import { DateTime } from 'luxon';
 import { markdownv2 } from 'telegram-format';
 
 const invoicesCommand: Middleware = async ctx => {
+	console.log(ctx.match);
 	const fetchLimit = 5;
-	const { items, limit, page, total } = await invoiceRepo.getInvoices(fetchLimit, 1);
-	console.log({ items, limit, page, total });
+	const { items, limit, page, total, hasPrev, hasNext } = await invoiceRepo.getInvoices({ limit: fetchLimit });
+	console.log({ items, limit, page, total, hasPrev, hasNext });
 	const lines: string[] = [markdownv2.bold(`Останні ${fetchLimit} платежів:`), ''];
 	for (const invoice of items) {
 		const dateString = DateTime.fromJSDate(invoice.createdAt)
