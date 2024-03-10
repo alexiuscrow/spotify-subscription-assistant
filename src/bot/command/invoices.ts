@@ -1,11 +1,11 @@
-import { Middleware } from 'grammy';
+import { MiddlewareFn } from 'grammy';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import { DateTime } from 'luxon';
 import { markdownv2 } from 'telegram-format';
 import invoiceMenu from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 
-const invoicesCommand: Middleware<BotContext> = async ctx => {
+const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 	const { items, pagination } = await invoiceRepo.getInvoices({ limit: 10, page: ctx.invoice?.pagination?.page || 1 });
 	ctx.invoice = { pagination };
 

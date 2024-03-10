@@ -44,7 +44,7 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 		page = 1,
 		orderByColumns = [desc(invoiceSchema.createdAt)],
 		pageDirection = SearchInvoicesPageDirection.REVERSE
-	} = criteria;
+	} = criteria || {};
 
 	return db.transaction(async trx => {
 		const query = trx.select().from(invoiceSchema);
