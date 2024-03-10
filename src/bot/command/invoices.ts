@@ -4,10 +4,11 @@ import { DateTime } from 'luxon';
 import { markdownv2 } from 'telegram-format';
 
 const invoicesCommand: Middleware = async ctx => {
-	const limit = 5;
-	const invoices = await invoiceRepo.getInvoices(limit, 1);
-	const lines: string[] = [markdownv2.bold(`Останні ${limit} платежів:`), ''];
-	for (const invoice of invoices) {
+	const fetchLimit = 5;
+	const { items, limit, page, total } = await invoiceRepo.getInvoices(fetchLimit, 1);
+	console.log({ items, limit, page, total });
+	const lines: string[] = [markdownv2.bold(`Останні ${fetchLimit} платежів:`), ''];
+	for (const invoice of items) {
 		const dateString = DateTime.fromJSDate(invoice.createdAt)
 			.setZone(process.env.LUXON_ZONE_NAME as string)
 			.toFormat('dd/LL/yy, HH:mm');
