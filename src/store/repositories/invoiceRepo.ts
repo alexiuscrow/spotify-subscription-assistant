@@ -69,9 +69,10 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 			items,
 			pagination: {
 				limit,
-				page,
 				orderByColumns,
 				total,
+				page,
+				totalPages,
 				hasNext,
 				hasPrev
 			}

@@ -18,7 +18,7 @@ function initial(): SessionData {
 	return {
 		invoice: {
 			pagination: {
-				limit: 10,
+				limit: 12,
 				page: 1,
 				orderByColumns: [desc(invoiceSchema.createdAt)],
 				pageDirection: SearchInvoicesPageDirection.REVERSE

@@ -16,7 +16,9 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	const lines: string[] = [
 		markdownv2.bold(`Платежі за підписку`),
-		markdownv2.italic(`${(items as Array<object>).length} з ${pagination.total}`),
+		markdownv2.italic(
+			`Сторінка ${pagination.page} з ${pagination.totalPages}. Списання ${(items as Array<object>).length} з ${pagination.total}.`
+		),
 		''
 	];
 

@@ -3,7 +3,7 @@ import BotContext from '@/bot/BotContext';
 
 const startCommand: Middleware<BotContext> = async ctx => {
 	await ctx.api.setMyCommands([
-		{ command: 'invoices', description: 'Зписання за підписку' },
+		{ command: 'invoices', description: 'Списання за підписку' },
 		{ command: 'help', description: 'Показати довідку' }
 	]);
 
