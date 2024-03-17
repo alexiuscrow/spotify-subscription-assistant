@@ -9,6 +9,26 @@ export const getUserById = async (id: number) => {
 };
 
 export const checkIfTelegramUserAllowed = async (user: User) => {
+	console.log(
+		sql<object>`select case when ${exists(
+			db
+				.select({ id: allowedUserCriteria.id })
+				.from(allowedUserCriteria)
+				.where(eq(allowedUserCriteria.telegramId, user.id))
+		)} then ${db.query.allowedUserCriteria.findFirst({
+			where: eq(allowedUserCriteria.telegramId, user.id),
+			with: { allowedUserSubscriptionProps: true }
+		})} when ${and(
+			exists(
+				db
+					.select({ id: allowedUserCriteria.id })
+					.from(allowedUserCriteria)
+					.where(eq(allowedUserCriteria.firstName, user.first_name))
+			),
+			notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
+		)} then true else false end as result`
+	);
+
 	const { rows } = await db.execute(
 		sql<object>`select case when ${exists(
 			db
