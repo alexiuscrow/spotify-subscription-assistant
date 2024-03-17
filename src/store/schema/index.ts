@@ -4,3 +4,4 @@ export * from './subscription';
 export * from './invoice';
 export * from './payment';
 export * from './allowedUserCriteria';
+export * from './allowedUserSubscriptionProps';

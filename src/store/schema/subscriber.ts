@@ -14,7 +14,8 @@ export const subscriber = pgTable(
 			.references(() => user.id),
 		subscriptionId: integer('subscription_id')
 			.notNull()
-			.references(() => subscription.id)
+			.references(() => subscription.id),
+		spreadsheetSubscriberIndex: integer('spreadsheet_subscriber_index').notNull()
 	},
 	table => ({
 		unqUserSubscriptionPair: unique('unique_pair_userid_subscription_id').on(table.userId, table.subscriptionId)

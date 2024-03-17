@@ -1,8 +1,7 @@
 import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
-import { allowedUserCriteria, user } from '@/store/schema';
+import { allowedUserCriteria, user, user as userSchema } from '@/store/schema';
 import { User } from '@grammyjs/types';
-import { user as userSchema } from '@/store/schema';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 export const getUserById = async (id: number) => {
@@ -11,12 +10,15 @@ export const getUserById = async (id: number) => {
 
 export const checkIfTelegramUserAllowed = async (user: User) => {
 	const { rows } = await db.execute(
-		sql<boolean>`select case when ${exists(
+		sql<object>`select case when ${exists(
 			db
 				.select({ id: allowedUserCriteria.id })
 				.from(allowedUserCriteria)
 				.where(eq(allowedUserCriteria.telegramId, user.id))
-		)} then true when ${and(
+		)} then ${db.query.allowedUserCriteria.findFirst({
+			where: eq(allowedUserCriteria.telegramId, user.id),
+			with: { allowedUserSubscriptionProps: true }
+		})} when ${and(
 			exists(
 				db
 					.select({ id: allowedUserCriteria.id })
@@ -26,7 +28,7 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 			notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
 		)} then true else false end as result`
 	);
-	return rows[0].result as boolean;
+	return rows[0].result as object;
 };
 
 export const createUser = async (user: User) => {

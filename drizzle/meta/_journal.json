@@ -22,6 +22,20 @@
       "when": 1709750447746,
       "tag": "0002_chemical_harry_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1710701147954,
+      "tag": "0003_perfect_the_stranger",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1710702197774,
+      "tag": "0004_chief_sharon_carter",
+      "breakpoints": true
     }
   ]
 }

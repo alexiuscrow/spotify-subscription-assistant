@@ -1,6 +1,7 @@
 import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
 import BotContext from '@/bot/BotContext';
+import { inspect } from 'node:util';
 
 const authenticator: Middleware<BotContext> = async (ctx, next) => {
 	if (!ctx.from) {
@@ -8,11 +9,14 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 		return;
 	}
 
+	console.log(inspect(ctx.msg, { depth: 20 }));
+
 	const currentTelegramUser = ctx.from;
 	const storedUser = await userRepo.getUserById(currentTelegramUser.id);
 
 	if (!storedUser) {
 		const isUserAllowed = await userRepo.checkIfTelegramUserAllowed(currentTelegramUser);
+		console.log('isUserAllowed', isUserAllowed);
 		if (!isUserAllowed) {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;

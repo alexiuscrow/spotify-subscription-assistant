@@ -16,7 +16,7 @@
     "@vercel/postgres": "0.7.2",
     "drizzle-orm": "0.29.4",
     "env-cmd": "10.1.0",
-    "googleapis": "39.2.0",
+    "googleapis": "134.0.0",
     "grammy": "1.21.1",
     "luxon": "3.4.4",
     "next": "14.1.0",
