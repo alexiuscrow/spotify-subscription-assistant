@@ -1,5 +1,7 @@
 import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
+import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
+import * as subscriberRepo from '@/store/repositories/subscriberRepo';
 import BotContext from '@/bot/BotContext';
 
 const authenticator: Middleware<BotContext> = async (ctx, next) => {
@@ -17,9 +19,21 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
+			const subscription = await subscriptionRepo.getSubscription();
+			if (!subscription) throw 'Subscription not found';
+
+			const newUser = await userRepo.createUser(currentTelegramUser);
+			if (!newUser) throw 'Failed to create user';
+
 			const allowedUserCriteria = await userRepo.getAllowedUserCriteriaById(allowedUserCriteriaId);
-			console.log('allowedUserCriteria', allowedUserCriteria);
-			await userRepo.createUser(currentTelegramUser);
+			if (!allowedUserCriteria.allowedUserSubscriptionProps.spreadsheetSubscriberIndex)
+				throw 'Spreadsheet subscriber index not found';
+
+			await subscriberRepo.createSubscriber({
+				userId: newUser.id,
+				subscriptionId: subscription.id,
+				spreadsheetSubscriberIndex: allowedUserCriteria.allowedUserSubscriptionProps.spreadsheetSubscriberIndex
+			});
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
 		}

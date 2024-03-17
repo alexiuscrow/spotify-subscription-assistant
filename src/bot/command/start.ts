@@ -7,8 +7,6 @@ const startCommand: Middleware<BotContext> = async ctx => {
 		{ command: 'invoices', description: 'Списання за підписку' },
 		{ command: 'help', description: 'Показати довідку' }
 	]);
-
-	return ctx.reply('Привіт! Напиши /help, щоб побачити список команд.');
 };
 
 export default startCommand;

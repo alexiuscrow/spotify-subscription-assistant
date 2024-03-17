@@ -1,6 +1,6 @@
 import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
-import { allowedUserCriteria, user, user as userSchema } from '@/store/schema';
+import { allowedUserCriteria, user, user as userSchema, allowedUserSubscriptionProps } from '@/store/schema';
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
@@ -40,19 +40,29 @@ export const getAllowedUserCriteriaById = async (id: number) => {
 		with: {
 			allowedUserSubscriptionProps: true
 		}
-	});
+	}) as Promise<
+		ReturnType<
+			allowedUserCriteria.$inferSelect & {
+				['allowedUserSubscriptionProps']: allowedUserSubscriptionProps.$inferSelect;
+			}
+		>
+	>;
 };
 
 export const createUser = async (user: User) => {
 	const isAdmin = user.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 	type NewUser = typeof userSchema.$inferInsert;
-	return db.insert(userSchema).values({
-		telegramId: user.id,
-		firstName: user.first_name,
-		lastName: user.last_name,
-		username: user.username,
-		role: isAdmin ? 'admin' : 'regular'
-	} as NewUser);
+	type InferUser = typeof userSchema.$inferSelect;
+	return db
+		.insert(userSchema)
+		.values({
+			telegramId: user.id,
+			firstName: user.first_name,
+			lastName: user.last_name,
+			username: user.username,
+			role: isAdmin ? 'admin' : 'regular'
+		} as NewUser)
+		.returning() as InferUser;
 };
 
 export const updateUser = async (id: number, values: PgUpdateSetSource<typeof userSchema>) => {
