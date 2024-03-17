@@ -38,8 +38,9 @@ export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<Spre
 
 		const year = Number(valueRange.range.split('!')[0].replace(/[^0-9]/g, ''));
 		yearsResult[year] = valueRange.values.reduce((subscriberResult, subscriberRow, subscriberIndex) => {
-			const missingMonthCount = 12 - subscriberRow.length;
-			const missingMonths = Array.from({ length: missingMonthCount }, () => null);
+			const expectedMonthNum = 12;
+			const missingMonthNum = expectedMonthNum - subscriberRow.length;
+			const missingMonths = Array.from({ length: missingMonthNum }, () => null);
 
 			subscriberResult[subscriberIndex] = [...missingMonths, ...subscriberRow].reduce(
 				(monthResult, monthValue, monthIndex) => {
