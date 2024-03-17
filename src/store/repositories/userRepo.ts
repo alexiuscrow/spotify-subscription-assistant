@@ -34,15 +34,6 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 	return rows[0].result as number | null;
 };
 
-export const getAllowedUserCriteriaById = async (id: number) => {
-	return db.query.allowedUserCriteria.findFirst({
-		where: eq(allowedUserCriteria.id, id),
-		with: {
-			allowedUserSubscriptionProps: true
-		}
-	});
-};
-
 export const createUser = async (user: User) => {
 	const isAdmin = user.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 	type NewUser = typeof userSchema.$inferInsert;

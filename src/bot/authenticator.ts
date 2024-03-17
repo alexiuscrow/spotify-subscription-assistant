@@ -2,6 +2,7 @@ import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
 import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
 import * as subscriberRepo from '@/store/repositories/subscriberRepo';
+import * as allowedUserSubscriptionPropsRepo from '@/store/repositories/allowedUserSubscriptionPropsRepo';
 import BotContext from '@/bot/BotContext';
 
 const authenticator: Middleware<BotContext> = async (ctx, next) => {
@@ -25,16 +26,15 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 			const newUser = await userRepo.createUser(currentTelegramUser);
 			if (!newUser) throw 'Failed to create user';
 
-			const allowedUserCriteria = await userRepo.getAllowedUserCriteriaById(allowedUserCriteriaId);
-			// noinspection TypeScriptUnresolvedReference
-			if (!allowedUserCriteria?.allowedUserSubscriptionProps?.spreadsheetSubscriberIndex)
-				throw 'Spreadsheet subscriber index not found';
+			const subscriptionProps =
+				await allowedUserSubscriptionPropsRepo.getAllowedUserSubscriptionPropsById(allowedUserCriteriaId);
+			if (!subscriptionProps?.spreadsheetSubscriberIndex) throw 'Spreadsheet subscriber index not found';
 
 			// noinspection TypeScriptUnresolvedReference
 			await subscriberRepo.createSubscriber({
 				userId: newUser.id,
 				subscriptionId: subscription.id,
-				spreadsheetSubscriberIndex: allowedUserCriteria.allowedUserSubscriptionProps.spreadsheetSubscriberIndex
+				spreadsheetSubscriberIndex: subscriptionProps.spreadsheetSubscriberIndex
 			});
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
