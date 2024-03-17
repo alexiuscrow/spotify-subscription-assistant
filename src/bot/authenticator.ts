@@ -13,7 +13,7 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 
 	if (!storedUser) {
 		const allowedUserCriteriaId = await userRepo.getAllowedUserCriteriaId(currentTelegramUser);
-		if (!allowedUserCriteriaId) {
+		if (allowedUserCriteriaId === null) {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
