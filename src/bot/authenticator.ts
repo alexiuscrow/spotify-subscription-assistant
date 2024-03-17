@@ -26,9 +26,11 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 			if (!newUser) throw 'Failed to create user';
 
 			const allowedUserCriteria = await userRepo.getAllowedUserCriteriaById(allowedUserCriteriaId);
+			// noinspection TypeScriptUnresolvedReference
 			if (!allowedUserCriteria.allowedUserSubscriptionProps.spreadsheetSubscriberIndex)
 				throw 'Spreadsheet subscriber index not found';
 
+			// noinspection TypeScriptUnresolvedReference
 			await subscriberRepo.createSubscriber({
 				userId: newUser.id,
 				subscriptionId: subscription.id,
