@@ -47,7 +47,7 @@ export const createUser = async (user: User) => {
 			username: user.username,
 			role: isAdmin ? 'admin' : 'regular'
 		} as NewUser)
-		.returning() as InferUser;
+		.returning() as Promise<InferUser>;
 };
 
 export const updateUser = async (id: number, values: PgUpdateSetSource<typeof userSchema>) => {
