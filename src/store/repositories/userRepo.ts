@@ -2,31 +2,34 @@ import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
 import { allowedUserCriteria, user, user as userSchema } from '@/store/schema';
 import { User } from '@grammyjs/types';
-import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
+import { PgDialect, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 export const getUserById = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 };
 
 export const checkIfTelegramUserAllowed = async (user: User) => {
+	const pgDialect = new PgDialect();
 	console.log(
-		sql<object>`select case when ${exists(
-			db
-				.select({ id: allowedUserCriteria.id })
-				.from(allowedUserCriteria)
-				.where(eq(allowedUserCriteria.telegramId, user.id))
-		)} then ${db.query.allowedUserCriteria.findFirst({
-			where: eq(allowedUserCriteria.telegramId, user.id),
-			with: { allowedUserSubscriptionProps: true }
-		})} when ${and(
-			exists(
+		pgDialect.sqlToQuery(
+			sql<object>`select case when ${exists(
 				db
 					.select({ id: allowedUserCriteria.id })
 					.from(allowedUserCriteria)
-					.where(eq(allowedUserCriteria.firstName, user.first_name))
-			),
-			notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
-		)} then true else false end as result`
+					.where(eq(allowedUserCriteria.telegramId, user.id))
+			)} then ${db.query.allowedUserCriteria.findFirst({
+				where: eq(allowedUserCriteria.telegramId, user.id),
+				with: { allowedUserSubscriptionProps: true }
+			})} when ${and(
+				exists(
+					db
+						.select({ id: allowedUserCriteria.id })
+						.from(allowedUserCriteria)
+						.where(eq(allowedUserCriteria.firstName, user.first_name))
+				),
+				notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
+			)} then true else false end as result`
+		)
 	);
 
 	const { rows } = await db.execute(
