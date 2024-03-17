@@ -1,6 +1,6 @@
 import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
-import { allowedUserCriteria, user, user as userSchema, allowedUserSubscriptionProps } from '@/store/schema';
+import { allowedUserCriteria, allowedUserSubscriptionProps, user as userSchema, user } from '@/store/schema';
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
@@ -41,11 +41,9 @@ export const getAllowedUserCriteriaById = async (id: number) => {
 			allowedUserSubscriptionProps: true
 		}
 	}) as Promise<
-		ReturnType<
-			allowedUserCriteria.$inferSelect & {
-				['allowedUserSubscriptionProps']: allowedUserSubscriptionProps.$inferSelect;
-			}
-		>
+		allowedUserCriteria.$inferSelect & {
+			['allowedUserSubscriptionProps']: allowedUserSubscriptionProps.$inferSelect;
+		}
 	>;
 };
 
