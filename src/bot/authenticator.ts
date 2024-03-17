@@ -13,6 +13,7 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 
 	const currentTelegramUser = ctx.from;
 	const storedUser = await userRepo.getUserById(currentTelegramUser.id);
+	console.log('storedUser', storedUser);
 
 	if (!storedUser) {
 		const isUserAllowed = await userRepo.checkIfTelegramUserAllowed(currentTelegramUser);
