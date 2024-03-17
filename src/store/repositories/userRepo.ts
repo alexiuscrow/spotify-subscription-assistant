@@ -1,6 +1,6 @@
 import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
-import { allowedUserCriteria, allowedUserSubscriptionProps, user as userSchema, user } from '@/store/schema';
+import { allowedUserCriteria, user as userSchema, user } from '@/store/schema';
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
@@ -36,16 +36,21 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 
 export const getAllowedUserCriteriaById = async (id: number) => {
 	type InferAllowedUserCriteria = typeof allowedUserCriteria.$inferSelect;
-	type InferAllowedUserSubscriptionProps = typeof allowedUserSubscriptionProps.$inferSelect;
 
-	return db.query.allowedUserCriteria.findFirst({
+	return (await db.query.allowedUserCriteria.findFirst({
 		where: eq(allowedUserCriteria.id, id),
 		with: {
 			allowedUserSubscriptionProps: true
 		}
-	}) as InferAllowedUserCriteria & {
-		['allowedUserSubscriptionProps']: Omit<InferAllowedUserSubscriptionProps, 'allowedUserCriteriaId'>;
-	};
+	})) as Promise<
+		InferAllowedUserCriteria & {
+			allowedUserSubscriptionProps: {
+				id: number;
+				allowedUserCriteriaId: number;
+				spreadsheetSubscriberIndex: number;
+			};
+		}
+	>;
 };
 
 export const createUser = async (user: User) => {
