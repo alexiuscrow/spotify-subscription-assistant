@@ -1,8 +1,8 @@
 import { google, sheets_v4 } from 'googleapis';
-import { Month, SpreadsheetPaymentsByYear } from '@/@types/spreadsheet';
+import { SpreadsheetPaymentsByYear } from '@/@types/spreadsheet';
 
 const auth = new google.auth.GoogleAuth({
-	scopes: JSON.parse(process.env.GOOGLE_AUTH_SCOPES),
+	scopes: JSON.parse(process.env.GOOGLE_AUTH_SCOPES as string),
 	credentials: {
 		type: process.env.GOOGLE_AUTH_TYPE,
 		project_id: process.env.GOOGLE_AUTH_PROJECT_ID,
