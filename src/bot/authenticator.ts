@@ -13,15 +13,15 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 
 	const currentTelegramUser = ctx.from;
 	const storedUser = await userRepo.getUserById(currentTelegramUser.id);
-	console.log('storedUser', storedUser);
 
 	if (!storedUser) {
-		const isUserAllowed = await userRepo.checkIfTelegramUserAllowed(currentTelegramUser);
-		console.log('isUserAllowed', isUserAllowed);
-		if (!isUserAllowed) {
+		const allowedUserCriteriaId = await userRepo.getAllowedUserCriteriaId(currentTelegramUser);
+		if (!allowedUserCriteriaId) {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
+			const allowedUserCriteria = await userRepo.getAllowedUserCriteriaById(allowedUserCriteriaId);
+			console.log('allowedUserCriteria', allowedUserCriteria);
 			await userRepo.createUser(currentTelegramUser);
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');

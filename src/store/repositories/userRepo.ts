@@ -2,41 +2,15 @@ import { db } from '@/store/db';
 import { and, eq, exists, notExists, sql } from 'drizzle-orm';
 import { allowedUserCriteria, user, user as userSchema } from '@/store/schema';
 import { User } from '@grammyjs/types';
-import { PgDialect, PgUpdateSetSource } from 'drizzle-orm/pg-core';
+import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 export const getUserById = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 };
 
-export const checkIfTelegramUserAllowed = async (user: User) => {
-	const pgDialect = new PgDialect();
-	console.log(
-		pgDialect.sqlToQuery(
-			sql<object>`select case when ${exists(
-				db
-					.select({ id: allowedUserCriteria.id })
-					.from(allowedUserCriteria)
-					.where(eq(allowedUserCriteria.telegramId, user.id))
-			)} then ${db
-				.select({ id: allowedUserCriteria.id })
-				.from(allowedUserCriteria)
-				.where(eq(allowedUserCriteria.telegramId, user.id))} when ${and(
-				exists(
-					db
-						.select({ id: allowedUserCriteria.id })
-						.from(allowedUserCriteria)
-						.where(eq(allowedUserCriteria.firstName, user.first_name))
-				),
-				notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
-			)} then ${db
-				.select({ id: allowedUserCriteria.id })
-				.from(allowedUserCriteria)
-				.where(eq(allowedUserCriteria.firstName, user.first_name))} end as result`
-		)
-	);
-
+export const getAllowedUserCriteriaId = async (user: User) => {
 	const { rows } = await db.execute(
-		sql<object>`select case when ${exists(
+		sql<number | null>`select case when ${exists(
 			db
 				.select({ id: allowedUserCriteria.id })
 				.from(allowedUserCriteria)
@@ -57,7 +31,16 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 			.from(allowedUserCriteria)
 			.where(eq(allowedUserCriteria.firstName, user.first_name))} end as result`
 	);
-	return rows[0].result as object;
+	return rows[0].result as number | null;
+};
+
+export const getAllowedUserCriteriaById = async (id: number) => {
+	return db.query.allowedUserCriteria.findFirst({
+		where: eq(allowedUserCriteria.id, id),
+		with: {
+			allowedUserSubscriptionProps: true
+		}
+	});
 };
 
 export const createUser = async (user: User) => {
