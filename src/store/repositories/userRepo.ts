@@ -55,7 +55,7 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 		)} then ${db
 			.select({ id: allowedUserCriteria.id })
 			.from(allowedUserCriteria)
-			.where(eq(allowedUserCriteria.firstName, user.first_name))} else false end as result`
+			.where(eq(allowedUserCriteria.firstName, user.first_name))} end as result`
 	);
 	return rows[0].result as object;
 };
