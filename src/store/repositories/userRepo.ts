@@ -17,10 +17,10 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 					.select({ id: allowedUserCriteria.id })
 					.from(allowedUserCriteria)
 					.where(eq(allowedUserCriteria.telegramId, user.id))
-			)} then ${db.query.allowedUserCriteria.findFirst({
-				where: eq(allowedUserCriteria.telegramId, user.id),
-				with: { allowedUserSubscriptionProps: true }
-			})} when ${and(
+			)} then ${db
+				.select({ id: allowedUserCriteria.id })
+				.from(allowedUserCriteria)
+				.where(eq(allowedUserCriteria.telegramId, user.id))} when ${and(
 				exists(
 					db
 						.select({ id: allowedUserCriteria.id })
@@ -28,7 +28,10 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 						.where(eq(allowedUserCriteria.firstName, user.first_name))
 				),
 				notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
-			)} then true else false end as result`
+			)} then ${db
+				.select({ id: allowedUserCriteria.id })
+				.from(allowedUserCriteria)
+				.where(eq(allowedUserCriteria.firstName, user.first_name))} else false end as result`
 		)
 	);
 
@@ -38,10 +41,10 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 				.select({ id: allowedUserCriteria.id })
 				.from(allowedUserCriteria)
 				.where(eq(allowedUserCriteria.telegramId, user.id))
-		)} then ${db.query.allowedUserCriteria.findFirst({
-			where: eq(allowedUserCriteria.telegramId, user.id),
-			with: { allowedUserSubscriptionProps: true }
-		})} when ${and(
+		)} then ${db
+			.select({ id: allowedUserCriteria.id })
+			.from(allowedUserCriteria)
+			.where(eq(allowedUserCriteria.telegramId, user.id))} when ${and(
 			exists(
 				db
 					.select({ id: allowedUserCriteria.id })
@@ -49,7 +52,10 @@ export const checkIfTelegramUserAllowed = async (user: User) => {
 					.where(eq(allowedUserCriteria.firstName, user.first_name))
 			),
 			notExists(db.select({ id: userSchema.id }).from(userSchema).where(eq(userSchema.firstName, user.first_name)))
-		)} then true else false end as result`
+		)} then ${db
+			.select({ id: allowedUserCriteria.id })
+			.from(allowedUserCriteria)
+			.where(eq(allowedUserCriteria.firstName, user.first_name))} else false end as result`
 	);
 	return rows[0].result as object;
 };
