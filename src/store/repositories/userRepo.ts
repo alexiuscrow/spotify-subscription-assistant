@@ -35,14 +35,17 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 };
 
 export const getAllowedUserCriteriaById = async (id: number) => {
+	type InferAllowedUserCriteria = typeof allowedUserCriteria.$inferSelect;
+	type InferAllowedUserSubscriptionProps = typeof allowedUserSubscriptionProps.$inferSelect;
+
 	return db.query.allowedUserCriteria.findFirst({
 		where: eq(allowedUserCriteria.id, id),
 		with: {
 			allowedUserSubscriptionProps: true
 		}
 	}) as Promise<
-		allowedUserCriteria.$inferSelect & {
-			['allowedUserSubscriptionProps']: allowedUserSubscriptionProps.$inferSelect;
+		InferAllowedUserCriteria & {
+			['allowedUserSubscriptionProps']: InferAllowedUserSubscriptionProps;
 		}
 	>;
 };
