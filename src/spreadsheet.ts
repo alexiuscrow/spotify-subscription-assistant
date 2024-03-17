@@ -1,5 +1,10 @@
 import { google, sheets_v4 } from 'googleapis';
-import { SpreadsheetPaymentsByYear } from '@/@types/spreadsheet';
+import {
+	SpreadsheetMonthPaymentRawStatus,
+	SpreadsheetPayments,
+	SpreadsheetPaymentsByYear,
+	SpreadsheetSubscriber
+} from '@/@types/spreadsheets';
 
 const auth = new google.auth.GoogleAuth({
 	scopes: JSON.parse(process.env.GOOGLE_AUTH_SCOPES as string),
@@ -37,20 +42,23 @@ export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<Spre
 		if (!valueRange.values) throw 'The values are not defined';
 
 		const year = Number(valueRange.range.split('!')[0].replace(/[^0-9]/g, ''));
-		yearsResult[year] = valueRange.values.reduce((subscriberResult, subscriberRow, subscriberIndex) => {
-			const expectedMonthNum = 12;
-			const missingMonthNum = expectedMonthNum - subscriberRow.length;
-			const missingMonths = Array.from({ length: missingMonthNum }, () => null);
+		yearsResult[year] = valueRange.values.reduce(
+			(subscriberResult, subscriberRow: SpreadsheetMonthPaymentRawStatus[], subscriberIndex) => {
+				const expectedMonthNum = 12;
+				const missingMonthNum = expectedMonthNum - subscriberRow.length;
+				const missingMonths = Array.from({ length: missingMonthNum }, () => null);
 
-			subscriberResult[subscriberIndex] = [...missingMonths, ...subscriberRow].reduce(
-				(monthResult, monthValue, monthIndex) => {
-					monthResult[monthIndex] = monthValue === null ? null : monthValue === 'TRUE';
-					return monthResult;
-				},
-				{}
-			);
-			return subscriberResult;
-		}, {});
+				subscriberResult[subscriberIndex] = [...missingMonths, ...subscriberRow].reduce(
+					(monthResult, monthValue, monthIndex) => {
+						monthResult[monthIndex] = monthValue === null ? null : monthValue === SpreadsheetMonthPaymentRawStatus.TRUE;
+						return monthResult;
+					},
+					{} as SpreadsheetSubscriber
+				);
+				return subscriberResult;
+			},
+			{} as SpreadsheetPayments
+		);
 		return yearsResult;
 	}, {} as SpreadsheetPaymentsByYear);
 };
