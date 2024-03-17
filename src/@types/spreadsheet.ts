@@ -16,7 +16,7 @@ export enum Month {
 export type SubscriberPaymentPerMonthStatus = boolean | null;
 
 export interface SpreadsheetSubscriber {
-	[month: (typeof Month)[keyof Month]]: SubscriberPaymentPerMonthStatus;
+	[month: number]: SubscriberPaymentPerMonthStatus;
 }
 
 export interface SpreadsheetPaymentsByYear {
