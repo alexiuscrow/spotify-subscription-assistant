@@ -1,15 +1,12 @@
 import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
 import BotContext from '@/bot/BotContext';
-import { inspect } from 'node:util';
 
 const authenticator: Middleware<BotContext> = async (ctx, next) => {
 	if (!ctx.from) {
 		await ctx.reply('Вибачте, але я не можу знайти ваш профіль.');
 		return;
 	}
-
-	console.log(inspect(ctx.msg, { depth: 20 }));
 
 	const currentTelegramUser = ctx.from;
 	const storedUser = await userRepo.getUserById(currentTelegramUser.id);
