@@ -45,7 +45,7 @@ export const getAllowedUserCriteriaById = async (id: number) => {
 		}
 	}) as Promise<
 		InferAllowedUserCriteria & {
-			['allowedUserSubscriptionProps']: InferAllowedUserSubscriptionProps;
+			['allowedUserSubscriptionProps']: Omit<InferAllowedUserSubscriptionProps, 'allowedUserCriteriaId'>;
 		}
 	>;
 };
