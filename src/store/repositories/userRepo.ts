@@ -9,6 +9,7 @@ import {
 } from '@/store/schema';
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
+import { inspect } from 'node:util';
 
 export const getUserById = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
@@ -40,22 +41,6 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 	return rows[0].result as number | null;
 };
 
-export const createUser = async (telegramUser: User) => {
-	const isAdmin = telegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
-	type NewUser = typeof userSchema.$inferInsert;
-	type InferUser = typeof userSchema.$inferSelect;
-	return db
-		.insert(userSchema)
-		.values({
-			telegramId: telegramUser.id,
-			firstName: telegramUser.first_name,
-			lastName: telegramUser.last_name,
-			username: telegramUser.username,
-			role: isAdmin ? 'admin' : 'regular'
-		} as NewUser)
-		.returning() as unknown as InferUser;
-};
-
 export const createUserAndSubscribersIfNeeded = async (
 	telegramUser: User,
 	subscriptionId: number,
@@ -77,6 +62,8 @@ export const createUserAndSubscribersIfNeeded = async (
 				role: isAdmin ? 'admin' : 'regular'
 			} as NewUser)
 			.returning()) as unknown as InferUser;
+
+		console.log('New user', inspect(user, { depth: 3 }));
 
 		let subscriber: Subscriber | null = null;
 
