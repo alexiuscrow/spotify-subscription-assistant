@@ -61,7 +61,7 @@ export const createUserAndSubscribersIfNeeded = async (
 	subscriptionId: number,
 	allowedUserCriteriaId: number
 ) => {
-	const isAdmin = user.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
+	const isAdmin = telegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 	type NewUser = typeof userSchema.$inferInsert;
 	type InferUser = typeof userSchema.$inferSelect;
 	type Subscriber = typeof subscriberSchema.$inferSelect;
