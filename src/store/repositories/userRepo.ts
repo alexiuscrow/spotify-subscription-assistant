@@ -9,7 +9,6 @@ import {
 } from '@/store/schema';
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
-import { inspect } from 'node:util';
 
 export const getUserById = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
@@ -48,22 +47,21 @@ export const createUserAndSubscribersIfNeeded = async (
 ) => {
 	const isAdmin = telegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 	type NewUser = typeof userSchema.$inferInsert;
-	type InferUser = typeof userSchema.$inferSelect;
 	type Subscriber = typeof subscriberSchema.$inferSelect;
 
 	return db.transaction(async trx => {
-		const user = (await trx
-			.insert(userSchema)
-			.values({
-				telegramId: telegramUser.id,
-				firstName: telegramUser.first_name,
-				lastName: telegramUser.last_name,
-				username: telegramUser.username,
-				role: isAdmin ? 'admin' : 'regular'
-			} as NewUser)
-			.returning()) as unknown as InferUser;
-
-		console.log('New user', inspect(user, { depth: 3 }));
+		const user = (
+			await trx
+				.insert(userSchema)
+				.values({
+					telegramId: telegramUser.id,
+					firstName: telegramUser.first_name,
+					lastName: telegramUser.last_name,
+					username: telegramUser.username,
+					role: isAdmin ? 'admin' : 'regular'
+				} as NewUser)
+				.returning()
+		)[0];
 
 		let subscriber: Subscriber | null = null;
 
@@ -75,14 +73,16 @@ export const createUserAndSubscribersIfNeeded = async (
 			if (!subscriberProps?.spreadsheetSubscriberIndex) throw new Error('Spreadsheet subscriber index not found');
 
 			type NewSubscriber = typeof subscriberSchema.$inferInsert;
-			subscriber = (await trx
-				.insert(subscriberSchema)
-				.values({
-					userId: user.id,
-					subscriptionId: subscriptionId,
-					spreadsheetSubscriberIndex: subscriberProps.spreadsheetSubscriberIndex
-				} as NewSubscriber)
-				.returning()) as unknown as Subscriber;
+			subscriber = (
+				await trx
+					.insert(subscriberSchema)
+					.values({
+						userId: user.id,
+						subscriptionId: subscriptionId,
+						spreadsheetSubscriberIndex: subscriberProps.spreadsheetSubscriberIndex
+					} as NewSubscriber)
+					.returning()
+			)[0];
 		}
 
 		return { user, subscriber };
