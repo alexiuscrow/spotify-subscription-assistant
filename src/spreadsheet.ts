@@ -35,11 +35,11 @@ export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<Spre
 		spreadsheetId: process.env.LOG_GOOGLE_SHEETSPREAD_ID,
 		ranges
 	});
-	if (!result.data.valueRanges) throw 'The valueRanges are not defined';
+	if (!result.data.valueRanges) throw new Error('The valueRanges are not defined');
 
 	return result.data.valueRanges.reduce((yearsResult, valueRange) => {
-		if (!valueRange.range) throw 'The range is not defined';
-		if (!valueRange.values) throw 'The values are not defined';
+		if (!valueRange.range) throw new Error('The range is not defined');
+		if (!valueRange.values) throw new Error('The values are not defined');
 
 		const year = Number(valueRange.range.split('!')[0].replace(/[^0-9]/g, ''));
 		yearsResult[year] = valueRange.values.reduce(

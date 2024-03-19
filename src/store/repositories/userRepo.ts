@@ -85,7 +85,7 @@ export const createUserAndSubscribersIfNeeded = async (
 				where: eq(allowedUserSubscriptionProps.allowedUserCriteriaId, allowedUserCriteriaId)
 			});
 
-			if (!subscriberProps?.spreadsheetSubscriberIndex) throw 'Spreadsheet subscriber index not found';
+			if (!subscriberProps?.spreadsheetSubscriberIndex) throw new Error('Spreadsheet subscriber index not found');
 
 			type NewSubscriber = typeof subscriberSchema.$inferInsert;
 			subscriber = (await trx

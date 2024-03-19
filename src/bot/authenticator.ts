@@ -21,9 +21,10 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 			try {
 				const subscription = await subscriptionRepo.getSubscription();
 				await userRepo.createUserAndSubscribersIfNeeded(currentTelegramUser, subscription.id, allowedUserCriteriaId);
-			} catch (e: Error) {
+			} catch (e) {
 				await ctx.reply('Щось пішло не так. Звернись до адміна');
-				return ctx.reply('Помилка: ' + e.toString());
+				if (typeof e === 'string') return ctx.reply('Помилка: ' + e);
+				else if (e instanceof Error) return ctx.reply('Помилка: ' + e.toString());
 			}
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');

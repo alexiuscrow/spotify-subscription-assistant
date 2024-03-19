@@ -7,7 +7,7 @@ export const getSubscription = async () => {
 		where: eq(subscription.name, process.env.SUBSCRIPTION_NAME as string)
 	});
 
-	if (!result) throw 'Subscription not found';
+	if (!result) throw new Error('Subscription not found');
 
 	return result;
 };
