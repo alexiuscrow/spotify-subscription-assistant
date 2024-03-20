@@ -13,7 +13,11 @@ interface GetSubscriptionOptions {
 export const getSubscription = async (options?: GetSubscriptionOptions) => {
 	const result = await db.query.subscription.findFirst({
 		where: eq(subscription.name, process.env.SUBSCRIPTION_NAME as string),
-		with: options?.with
+		with: {
+			subscriberHistory: options?.with?.subscriberHistory || undefined,
+			subscribers: options?.with?.subscribers || undefined,
+			invoices: options?.with?.invoices || undefined
+		}
 	});
 
 	if (!result) throw new Error('Subscription not found');
