@@ -3,9 +3,9 @@ import { eq } from 'drizzle-orm';
 import { subscriber } from '@/store/schema';
 
 export const getSubscriberById = async (id: number) => {
-	return db.query.user.findFirst({ where: eq(subscriber.id, id) });
+	return db.query.subscriber.findFirst({ where: eq(subscriber.id, id) });
 };
 
 export const getSubscriberByUserId = async (id: number) => {
-	return db.query.user.findFirst({ where: eq(subscriber.userId, id) });
+	return db.query.subscriber.findFirst({ where: eq(subscriber.userId, id) });
 };
