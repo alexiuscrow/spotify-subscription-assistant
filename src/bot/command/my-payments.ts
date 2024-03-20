@@ -1,7 +1,6 @@
 import { Middleware } from 'grammy';
 import BotContext from '@/bot/BotContext';
 import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
-import { inspect } from 'node:util';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -11,7 +10,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	const payments = await getPaymentsForAllYearsBySubscriber(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
-	return ctx.reply(inspect(payments, { depth: 3 }));
+	return ctx.reply(JSON.stringify(payments));
 };
 
 export default myPaymentsCommand;
