@@ -14,6 +14,7 @@ interface InvoiceContext {
 
 export interface SessionData {
 	invoice: InvoiceContext;
+	user?: UserSession;
 }
 
 type BotContext = Context & SessionFlavor<SessionData>;

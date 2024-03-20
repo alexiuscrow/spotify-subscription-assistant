@@ -1,9 +1,10 @@
 import { google, sheets_v4 } from 'googleapis';
 import {
 	SpreadsheetMonthPaymentRawStatus,
-	SpreadsheetPayments,
-	SpreadsheetPaymentsByYear,
-	SpreadsheetSubscriber
+	SpreadsheetAllPayments,
+	SpreadsheetAllPaymentsByYear,
+	SpreadsheetSubscriber,
+	SpreadsheetPaymentsByYear
 } from '@/@types/spreadsheets';
 
 const auth = new google.auth.GoogleAuth({
@@ -29,7 +30,7 @@ export const getSheetTitles = async () => {
 	return availableSheetsResponse.data.sheets?.map(sheet => sheet.properties?.title as string) ?? [];
 };
 
-export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<SpreadsheetPaymentsByYear> => {
+export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<SpreadsheetAllPaymentsByYear> => {
 	const ranges = sheetTitles.map(title => `${title}!B3:M6`);
 	const result = await sheetService.spreadsheets.values.batchGet({
 		spreadsheetId: process.env.LOG_GOOGLE_SHEETSPREAD_ID,
@@ -57,13 +58,50 @@ export const getPaymentsFromSheets = async (sheetTitles: string[]): Promise<Spre
 				);
 				return subscriberResult;
 			},
-			{} as SpreadsheetPayments
+			{} as SpreadsheetAllPayments
 		);
 		return yearsResult;
-	}, {} as SpreadsheetPaymentsByYear);
+	}, {} as SpreadsheetAllPaymentsByYear);
 };
 
 export const getPaymentsForAllYears = async () => {
 	const sheetTitles = await getSheetTitles();
 	return getPaymentsFromSheets(sheetTitles);
+};
+
+export const getPaymentsFromSheetsBySubscriber = async (
+	sheetTitles: string[],
+	subscriberSpreadsheetPosition: number
+): Promise<SpreadsheetPaymentsByYear> => {
+	const rowOffset = 3;
+	const row = subscriberSpreadsheetPosition + rowOffset;
+	const ranges = sheetTitles.map(title => `${title}!B${row}:M${row}`);
+	const result = await sheetService.spreadsheets.values.batchGet({
+		spreadsheetId: process.env.LOG_GOOGLE_SHEETSPREAD_ID,
+		ranges
+	});
+	if (!result.data.valueRanges) throw new Error('The valueRanges are not defined');
+
+	return result.data.valueRanges.reduce((yearsResult, valueRange) => {
+		if (!valueRange.range) throw new Error('The range is not defined');
+		if (!valueRange.values) throw new Error('The values are not defined');
+
+		const year = Number(valueRange.range.split('!')[0].replace(/[^0-9]/g, ''));
+		const subscriberRow = valueRange.values[0];
+		const expectedMonthNum = 12;
+		const missingMonthNum = expectedMonthNum - subscriberRow.length;
+		const missingMonths = Array.from({ length: missingMonthNum }, () => null);
+
+		yearsResult[year] = [...missingMonths, ...subscriberRow].reduce((monthResult, monthValue, monthIndex) => {
+			monthResult[monthIndex] = monthValue === null ? null : monthValue === SpreadsheetMonthPaymentRawStatus.TRUE;
+			return monthResult;
+		}, {} as SpreadsheetSubscriber);
+
+		return yearsResult;
+	}, {} as SpreadsheetPaymentsByYear);
+};
+
+export const getPaymentsForAllYearsBySubscriber = async (subscriberSpreadsheetPosition: number) => {
+	const sheetTitles = await getSheetTitles();
+	return getPaymentsFromSheetsBySubscriber(sheetTitles, subscriberSpreadsheetPosition);
 };

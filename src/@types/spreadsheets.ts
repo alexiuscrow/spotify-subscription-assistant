@@ -23,10 +23,14 @@ export interface SpreadsheetSubscriber {
 	[month: number]: SpreadsheetMonthPaymentStatus;
 }
 
-export interface SpreadsheetPayments {
+export interface SpreadsheetAllPayments {
 	[subscriberIndex: number]: SpreadsheetSubscriber;
 }
 
+export interface SpreadsheetAllPaymentsByYear {
+	[year: number]: SpreadsheetAllPayments;
+}
+
 export interface SpreadsheetPaymentsByYear {
-	[year: number]: SpreadsheetPayments;
+	[year: number]: SpreadsheetSubscriber;
 }

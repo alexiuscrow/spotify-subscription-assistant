@@ -4,6 +4,10 @@ import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
 import BotContext from '@/bot/BotContext';
 
 const authenticator: Middleware<BotContext> = async (ctx, next) => {
+	if (ctx.session.user) {
+		return next();
+	}
+
 	if (!ctx.from) {
 		await ctx.reply('Вибачте, але я не можу знайти ваш профіль.');
 		return;
@@ -20,7 +24,13 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 		} else {
 			try {
 				const subscription = await subscriptionRepo.getSubscription();
-				await userRepo.createUserAndSubscribersIfNeeded(currentTelegramUser, subscription.id, allowedUserCriteriaId);
+				const { user, subscriber } = await userRepo.createUserAndSubscriberIfNeeded(
+					currentTelegramUser,
+					subscription.id,
+					allowedUserCriteriaId
+				);
+				ctx.session.user = user as UserSession;
+				ctx.session.user.subscriber = subscriber as Subscriber;
 			} catch (e) {
 				await ctx.reply('Щось пішло не так. Звернись до адміна');
 				if (typeof e === 'string') return ctx.reply('Помилка: ' + e);

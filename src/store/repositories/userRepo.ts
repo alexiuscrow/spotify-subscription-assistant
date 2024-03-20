@@ -40,7 +40,7 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 	return rows[0].result as number | null;
 };
 
-export const createUserAndSubscribersIfNeeded = async (
+export const createUserAndSubscriberIfNeeded = async (
 	telegramUser: User,
 	subscriptionId: number,
 	allowedUserCriteriaId: number
