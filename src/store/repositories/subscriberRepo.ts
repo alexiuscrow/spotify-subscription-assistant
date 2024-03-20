@@ -5,3 +5,7 @@ import { subscriber } from '@/store/schema';
 export const getSubscriberById = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(subscriber.id, id) });
 };
+
+export const getSubscriberByUserId = async (id: number) => {
+	return db.query.user.findFirst({ where: eq(subscriber.userId, id) });
+};

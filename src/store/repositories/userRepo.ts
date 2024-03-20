@@ -10,7 +10,7 @@ import {
 import { User } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
-export const getUserById = async (id: number) => {
+export const getUserByTelegramId = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 };
 
@@ -90,5 +90,5 @@ export const createUserAndSubscriberIfNeeded = async (
 };
 
 export const updateUser = async (id: number, values: PgUpdateSetSource<typeof userSchema>) => {
-	return db.update(userSchema).set(values).where(eq(user.id, id));
+	return db.update(userSchema).set(values).where(eq(user.id, id)).returning();
 };

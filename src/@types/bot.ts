@@ -14,5 +14,5 @@ interface UserSession {
 	role: 'regular' | 'admin';
 	status: 'active' | 'canceled';
 	createdAt: Date;
-	subscriber: Subscriber | null;
+	subscriber?: Subscriber | null;
 }

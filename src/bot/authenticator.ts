@@ -1,5 +1,6 @@
 import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
+import * as subscriberRepo from '@/store/repositories/subscriberRepo';
 import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
 import BotContext from '@/bot/BotContext';
 
@@ -14,7 +15,7 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 	}
 
 	const currentTelegramUser = ctx.from;
-	const storedUser = await userRepo.getUserById(currentTelegramUser.id);
+	const storedUser = await userRepo.getUserByTelegramId(currentTelegramUser.id);
 
 	if (!storedUser) {
 		const allowedUserCriteriaId = await userRepo.getAllowedUserCriteriaId(currentTelegramUser);
@@ -39,9 +40,24 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 
 			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
 		}
-	} else if (storedUser.status === 'canceled') {
-		await userRepo.updateUser(storedUser.id, { status: 'active' });
-		await ctx.reply('Ви відновили свій статус. З поверненням!');
+	} else {
+		if (storedUser.status === 'canceled') {
+			await userRepo.updateUser(storedUser.id, { status: 'active' });
+			await ctx.reply('Ви відновили свій статус. З поверненням!');
+		}
+
+		storedUser.status = 'active';
+		ctx.session.user = storedUser as UserSession;
+
+		if (storedUser.role !== 'admin') {
+			const subscriber = await subscriberRepo.getSubscriberByUserId(storedUser.id);
+			if (!subscriber) {
+				await ctx.reply('Щось пішло не так. Звернись до адміна.');
+				return;
+			}
+
+			ctx.session.user.subscriber = subscriber as Subscriber;
+		}
 	}
 
 	await next();
