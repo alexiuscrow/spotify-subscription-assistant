@@ -8,7 +8,7 @@ import BotContext from '@/bot/BotContext';
 const commandComposer = new Composer<BotContext>();
 
 commandComposer.command('start', startCommand);
-commandComposer.command('my-payments', myPaymentsCommand);
+commandComposer.command('my_payments', myPaymentsCommand);
 commandComposer.command('invoices', invoicesCommand);
 commandComposer.command('help', helpCommand);
 
