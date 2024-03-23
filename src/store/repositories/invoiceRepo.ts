@@ -2,7 +2,7 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
 import { StatementItem } from '@/@types/monobank';
 import { withPagination } from '@/store/utils';
-import { count, desc, SQL } from 'drizzle-orm';
+import { ColumnsSelection, count, desc, SQL } from 'drizzle-orm';
 import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
 
 export const createInvoice = async (statementItem: StatementItem, subscriptionId: number) => {
@@ -36,6 +36,7 @@ interface SearchInvoicesCriteria {
 	page?: number;
 	orderByColumns?: Array<PgColumn | SQL | SQL.Aliased>;
 	pageDirection?: SearchInvoicesPageDirection;
+	selection?: ((aliases: ColumnsSelection) => SQL | undefined) | SQL | undefined;
 }
 
 export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
@@ -43,15 +44,16 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 		limit = 5,
 		page = 1,
 		orderByColumns = [desc(invoiceSchema.createdAt)],
-		pageDirection = SearchInvoicesPageDirection.REVERSE
+		pageDirection = SearchInvoicesPageDirection.REVERSE,
+		selection
 	} = criteria || {};
 
 	return db.transaction(async trx => {
-		const query = trx.select().from(invoiceSchema);
+		const query = trx.select().from(invoiceSchema).where(selection);
 		const dynamicQuery = query.$dynamic();
 		const items = await withPagination(dynamicQuery as PgSelect, limit, page, orderByColumns);
 		const firstIndex = 0;
-		const total = (await trx.select({ total: count() }).from(invoiceSchema))[firstIndex].total;
+		const total = (await trx.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
 
 		const totalPages = Math.ceil(total / limit);
 

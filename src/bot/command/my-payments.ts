@@ -3,6 +3,10 @@ import BotContext from '@/bot/BotContext';
 import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
 import { DateTime } from 'luxon';
+import * as invoiceRepo from '@/store/repositories/invoiceRepo';
+import { desc, gt } from 'drizzle-orm';
+import { invoice as invoiceSchema } from '@/store/schema';
+import logger from '@/logger';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -12,7 +16,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	const payments = await getPaymentsForAllYearsBySubscriber(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
-	let latestDate: DateTime | null = null;
+	let latestPayedDate: DateTime | null = null;
 	const outputLines = [];
 
 	for (const year in payments) {
@@ -28,23 +32,31 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 					},
 					{ locale: process.env.DATETIME_LOCALE as string }
 				);
-				if (!latestDate || currentDate > latestDate) {
-					// noinspection TypeScriptUnresolvedReference
-					latestDate = currentDate;
+				if (!latestPayedDate || currentDate > latestPayedDate) {
+					latestPayedDate = currentDate;
 				}
 			}
 		}
 	}
 
-	if (latestDate) {
-		outputLines.push(
-			`Останній платіж було здійснено за період до ${markdownv2.bold(latestDate.toFormat('dd MMMM, yyyy'))}`
-		);
-	} else {
+	if (!latestPayedDate) {
 		outputLines.push('Платежів не знайдено');
+	} else {
+		outputLines.push(
+			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPayedDate.toFormat('dd MMMM, yyyy'))}`
+		);
+
+		const notPayedInvoices = await invoiceRepo.getInvoices({
+			limit: 1,
+			page: 1,
+			orderByColumns: [desc(invoiceSchema.createdAt)],
+			selection: gt(invoiceSchema.createdAt, latestPayedDate.toJSDate())
+		});
+
+		logger.info('notPayedInvoices', notPayedInvoices);
 	}
 
-	const responseMsg = outputLines.join('  \n');
+	const responseMsg = outputLines.join('\n');
 	return ctx.reply(responseMsg, { parse_mode: 'MarkdownV2' });
 };
 
