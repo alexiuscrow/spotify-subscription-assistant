@@ -3,7 +3,6 @@ import BotContext from '@/bot/BotContext';
 import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
 import { DateTime } from 'luxon';
-import logger from '@/logger';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -13,7 +12,6 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	const payments = await getPaymentsForAllYearsBySubscriber(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
-	logger.debug(payments);
 	let latestDate: DateTime | null = null;
 	const outputLines = [];
 
@@ -25,13 +23,13 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 				const currentDate = DateTime.fromObject(
 					{
 						year: parseInt(year),
-						month: parseInt(month) + 1
+						month: parseInt(month) + 1,
+						day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
 					},
 					{ locale: process.env.DATETIME_LOCALE as string }
 				);
 				if (!latestDate || currentDate > latestDate) {
 					// noinspection TypeScriptUnresolvedReference
-					logger.debug(`${currentDate.toFormat('MMMM yyyy')} > ${latestDate?.toFormat('MMMM yyyy')}`);
 					latestDate = currentDate;
 				}
 			}
@@ -40,7 +38,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 
 	if (latestDate) {
 		outputLines.push(
-			markdownv2.escape(`Останній платіж було здійсгнено за перідод до ${latestDate.toFormat('LLLL' + ' yyyy')}`)
+			markdownv2.escape(`Останній платіж було здійснено за перідод до ${latestDate.toFormat('dd MMMM, yyyy')}`)
 		);
 	} else {
 		outputLines.push('Платежів не знайдено');
