@@ -48,7 +48,12 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 
 		const notPayedInvoices = await invoiceRepo.getAllInvoices({
 			orderByColumns: [desc(invoiceSchema.createdAt)],
-			selection: gt(invoiceSchema.createdAt, latestPayedDate.toJSDate())
+			selection: gt(
+				invoiceSchema.createdAt,
+				DateTime.fromISO(<string>latestPayedDate.toISODate())
+					.plus({ month: 1 })
+					.toJSDate()
+			)
 		});
 
 		logger.info('notPayedInvoices');
