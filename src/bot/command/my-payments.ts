@@ -63,15 +63,15 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			const invoiceDate = DateTime.fromJSDate(invoice.createdAt);
 			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
 			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
+			const amount = Math.ceil(amountPerSubscriber * 100) / 100;
 			return {
-				invoiceDate,
-				amountPerSubscriber
+				date: invoiceDate,
+				amount
 			};
 		});
 
-		for (const { invoiceDate, amountPerSubscriber } of datesAndAmountsPerSubscriber) {
-			const dateString = invoiceDate.setZone(process.env.LUXON_ZONE_NAME as string).toFormat('dd/LL/yy, HH:mm');
-			const amount = Math.round((amountPerSubscriber + Number.EPSILON) * 100) / 100;
+		for (const { date, amount } of datesAndAmountsPerSubscriber) {
+			const dateString = date.setZone(process.env.LUXON_ZONE_NAME as string).toFormat('dd/LL/yy, HH:mm');
 			outputLines.push(`${markdownv2.escape(dateString)} — ${markdownv2.escape(String(amount))} грн`);
 		}
 	}
