@@ -1,11 +1,10 @@
 import { Middleware } from 'grammy';
 import BotContext from '@/bot/BotContext';
 import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
-import { inspect } from 'node:util';
+import { markdownv2 } from 'telegram-format';
+import { DateTime } from 'luxon';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
-	console.log('UserSession', inspect(ctx.session.user, { depth: null }));
-
 	if (ctx.session.user?.role === 'admin') {
 		return ctx.reply('Ця команда доступна тільки для звичайних користувачів.');
 	} else if (!ctx.session.user?.subscriber) {
@@ -13,7 +12,30 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	const payments = await getPaymentsForAllYearsBySubscriber(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
-	return ctx.reply(JSON.stringify(payments));
+	let latestDate: DateTime | null = null;
+	const outputLines = [];
+
+	for (const year in payments) {
+		const subscriber = payments[year];
+		for (const month in subscriber) {
+			const paymentStatus = subscriber[month];
+			if (paymentStatus === true) {
+				const currentDate = DateTime.fromObject({ year: parseInt(year), month: parseInt(month) });
+				if (!latestDate || currentDate > latestDate) {
+					latestDate = currentDate;
+				}
+			}
+		}
+	}
+
+	if (latestDate) {
+		outputLines.push(markdownv2.escape(`Останній платіж: ${latestDate.toFormat('LLLL yyyy')}`));
+	} else {
+		outputLines.push('Платежів не знайдено');
+	}
+
+	const responseMsg = outputLines.join('  \n');
+	return ctx.reply(responseMsg, { parse_mode: 'MarkdownV2' });
 };
 
 export default myPaymentsCommand;
