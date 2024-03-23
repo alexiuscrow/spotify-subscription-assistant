@@ -31,7 +31,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 				);
 				if (!latestDate || currentDate > latestDate) {
 					// noinspection TypeScriptUnresolvedReference
-					logger.debug(`${currentDate.toFormat('LLLL yyyy')} > ${latestDate?.toFormat('LLLL yyyy')}`);
+					logger.debug(`${currentDate.toFormat('MMMM yyyy')} > ${latestDate?.toFormat('MMMM yyyy')}`);
 					latestDate = currentDate;
 				}
 			}
