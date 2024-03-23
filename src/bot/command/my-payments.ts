@@ -46,9 +46,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPayedDate.toFormat('dd MMMM, yyyy'))}`
 		);
 
-		const notPayedInvoices = await invoiceRepo.getInvoices({
-			limit: 1,
-			page: 1,
+		const notPayedInvoices = await invoiceRepo.getAllInvoices({
 			orderByColumns: [desc(invoiceSchema.createdAt)],
 			selection: gt(invoiceSchema.createdAt, latestPayedDate.toJSDate())
 		});

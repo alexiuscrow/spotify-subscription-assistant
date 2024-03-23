@@ -82,13 +82,40 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 	});
 };
 
+export const getAllInvoices = async ({
+	selection,
+	orderByColumns,
+	pageDirection = SearchInvoicesPageDirection.REVERSE
+}: Pick<SearchInvoicesCriteria, 'orderByColumns' | 'pageDirection' | 'selection'>) => {
+	const limit = 1; // TODO: increase limit
+	let hasMore = true;
+	let page = 1;
+	const invoices = [];
+
+	while (hasMore) {
+		const { items, pagination } = await getInvoices({
+			limit,
+			page,
+			orderByColumns,
+			pageDirection,
+			selection
+		});
+		invoices.push(...items);
+		hasMore = pageDirection === SearchInvoicesPageDirection.STRAIGHT ? pagination.hasNext : pagination.hasPrev;
+		page++;
+	}
+
+	return invoices;
+};
+
 export const getAllowedInvoicePaginationOptions = async ({
 	limit,
 	page,
-	pageDirection
-}: Required<Omit<SearchInvoicesCriteria, 'orderByColumns'>>) => {
+	pageDirection,
+	selection
+}: Required<Omit<SearchInvoicesCriteria, 'orderByColumns'>> & Pick<SearchInvoicesCriteria, 'selection'>) => {
 	const firstIndex = 0;
-	const total = (await db.select({ total: count() }).from(invoiceSchema))[firstIndex].total;
+	const total = (await db.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
 
 	const totalPages = Math.ceil(total / limit);
 
