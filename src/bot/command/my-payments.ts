@@ -22,7 +22,13 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 		for (const month in subscriber) {
 			const paymentStatus = subscriber[month];
 			if (paymentStatus === true) {
-				const currentDate = DateTime.fromObject({ year: parseInt(year), month: parseInt(month) + 1 }, { locale: 'uk' });
+				const currentDate = DateTime.fromObject(
+					{
+						year: parseInt(year),
+						month: parseInt(month) + 1
+					},
+					{ locale: process.env.DATETIME_LOCALE as string }
+				);
 				if (!latestDate || currentDate > latestDate) {
 					// noinspection TypeScriptUnresolvedReference
 					logger.debug(`${currentDate.toFormat('LLLL yyyy')} > ${latestDate?.toFormat('LLLL yyyy')}`);
