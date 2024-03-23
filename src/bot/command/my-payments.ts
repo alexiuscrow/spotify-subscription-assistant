@@ -85,7 +85,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	outputLines.push('\n');
-	outputLines.push(markdownv2.italic('* Всі суми платежів округлені до 1 гривні'));
+	outputLines.push(markdownv2.italic('Всі суми платежів округлені до 1 гривні'));
 
 	const responseMsg = outputLines.join('\n');
 	return ctx.reply(responseMsg, { parse_mode: 'MarkdownV2' });
