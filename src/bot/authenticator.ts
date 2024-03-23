@@ -38,7 +38,7 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 				else if (e instanceof Error) return ctx.reply('Помилка: ' + e.toString());
 			}
 
-			await ctx.reply('Ти пройщов автентифікацію. Ласкаво просимо!');
+			await ctx.reply('Автентифікацію пройдено. Ласкаво просимо!');
 		}
 	} else {
 		if (storedUser.status === 'canceled') {
