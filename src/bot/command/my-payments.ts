@@ -13,6 +13,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	const payments = await getPaymentsForAllYearsBySubscriber(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
+	logger.debug(payments);
 	let latestDate: DateTime | null = null;
 	const outputLines = [];
 
@@ -21,10 +22,10 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 		for (const month in subscriber) {
 			const paymentStatus = subscriber[month];
 			if (paymentStatus === true) {
-				const currentDate = DateTime.fromObject({ year: parseInt(year), month: parseInt(month) });
+				const currentDate = DateTime.fromObject({ year: parseInt(year), month: parseInt(month + 1) });
 				if (!latestDate || currentDate > latestDate) {
 					// noinspection TypeScriptUnresolvedReference
-					logger.info(`${currentDate.toFormat('LLLL yyyy')} > ${latestDate?.toFormat('LLLL yyyy')}`);
+					logger.debug(`${currentDate.toFormat('LLLL yyyy')} > ${latestDate?.toFormat('LLLL yyyy')}`);
 					latestDate = currentDate;
 				}
 			}
