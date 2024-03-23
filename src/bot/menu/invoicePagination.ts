@@ -1,8 +1,8 @@
 import { Menu } from '@grammyjs/menu';
 import BotContext from '@/bot/BotContext';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
-import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
 import invoicesCommand from '@/bot/command/invoices';
+import { SearchPageDirection } from '@/@types/db';
 
 const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(async (ctx, range) => {
 	const pagination = ctx.session.invoice.pagination;
@@ -14,7 +14,7 @@ const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(asy
 
 	if (hasPrev) {
 		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
-			if (ctx.session.invoice.pagination.pageDirection === SearchInvoicesPageDirection.STRAIGHT)
+			if (ctx.session.invoice.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.invoice.pagination.page--;
 			else ctx.session.invoice.pagination.page++;
 
@@ -23,7 +23,7 @@ const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(asy
 	}
 	if (hasNext) {
 		range.text('Наступні ➡️', (ctx: BotContext, next) => {
-			if (ctx.session.invoice.pagination.pageDirection === SearchInvoicesPageDirection.STRAIGHT)
+			if (ctx.session.invoice.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.invoice.pagination.page++;
 			else ctx.session.invoice.pagination.page--;
 

@@ -2,8 +2,9 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
 import { StatementItem } from '@/@types/monobank';
 import { withPagination } from '@/store/utils';
-import { ColumnsSelection, count, desc, SQL } from 'drizzle-orm';
-import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
+import { count, desc } from 'drizzle-orm';
+import { PgSelect } from 'drizzle-orm/pg-core';
+import { SearchCriteria, SearchPageDirection } from '@/@types/db';
 
 export const createInvoice = async (statementItem: StatementItem, subscriptionId: number) => {
 	const amountConvertor = -100;
@@ -26,25 +27,12 @@ export const createInvoice = async (statementItem: StatementItem, subscriptionId
 	return insertedInvoices[firstItemIndex];
 };
 
-export enum SearchInvoicesPageDirection {
-	STRAIGHT,
-	REVERSE
-}
-
-interface SearchInvoicesCriteria {
-	limit?: number;
-	page?: number;
-	orderByColumns?: Array<PgColumn | SQL | SQL.Aliased>;
-	pageDirection?: SearchInvoicesPageDirection;
-	selection?: ((aliases: ColumnsSelection) => SQL | undefined) | SQL | undefined;
-}
-
-export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
+export const getInvoices = async (criteria?: SearchCriteria) => {
 	const {
 		limit = 5,
 		page = 1,
 		orderByColumns = [desc(invoiceSchema.createdAt)],
-		pageDirection = SearchInvoicesPageDirection.REVERSE,
+		pageDirection = SearchPageDirection.REVERSE,
 		selection
 	} = criteria || {};
 
@@ -63,9 +51,9 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 		};
 
 		const hasNext =
-			pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
+			pageDirection === SearchPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
 		const hasPrev =
-			pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
+			pageDirection === SearchPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
 
 		return {
 			items,
@@ -85,9 +73,9 @@ export const getInvoices = async (criteria?: SearchInvoicesCriteria) => {
 export const getAllInvoices = async ({
 	selection,
 	orderByColumns,
-	pageDirection = SearchInvoicesPageDirection.REVERSE
-}: Pick<SearchInvoicesCriteria, 'orderByColumns' | 'pageDirection' | 'selection'>) => {
-	const limit = 1; // TODO: increase limit
+	pageDirection = SearchPageDirection.REVERSE
+}: Pick<SearchCriteria, 'orderByColumns' | 'pageDirection' | 'selection'>) => {
+	const limit = 1_000;
 	let hasMore = true;
 	let page = 1;
 	const invoices = [];
@@ -101,7 +89,7 @@ export const getAllInvoices = async ({
 			selection
 		});
 		invoices.push(...items);
-		hasMore = pageDirection === SearchInvoicesPageDirection.STRAIGHT ? pagination.hasNext : pagination.hasPrev;
+		hasMore = pageDirection === SearchPageDirection.STRAIGHT ? pagination.hasNext : pagination.hasPrev;
 		page++;
 	}
 
@@ -111,9 +99,9 @@ export const getAllInvoices = async ({
 export const getAllowedInvoicePaginationOptions = async ({
 	limit = 5,
 	page = 1,
-	pageDirection = SearchInvoicesPageDirection.REVERSE,
+	pageDirection = SearchPageDirection.REVERSE,
 	selection
-}: Omit<SearchInvoicesCriteria, 'orderByColumns'>) => {
+}: Omit<SearchCriteria, 'orderByColumns'>) => {
 	const firstIndex = 0;
 	const total = (await db.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
 
@@ -125,9 +113,9 @@ export const getAllowedInvoicePaginationOptions = async ({
 	};
 
 	const hasNext =
-		pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
+		pageDirection === SearchPageDirection.STRAIGHT ? straightDirection.hasNext : straightDirection.hasPrev;
 	const hasPrev =
-		pageDirection === SearchInvoicesPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
+		pageDirection === SearchPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
 
 	return { hasNext, hasPrev };
 };

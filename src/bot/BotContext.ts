@@ -1,14 +1,14 @@
 import { Context, SessionFlavor } from 'grammy';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import { SQL } from 'drizzle-orm';
-import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
+import { SearchPageDirection } from '@/@types/db';
 
 interface InvoiceContext {
 	pagination: {
 		limit: number;
 		page: number;
 		orderByColumns: Array<PgColumn | SQL | SQL.Aliased>;
-		pageDirection: SearchInvoicesPageDirection;
+		pageDirection: SearchPageDirection;
 	};
 }
 

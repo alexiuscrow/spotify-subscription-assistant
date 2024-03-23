@@ -4,9 +4,9 @@ import authenticatorMiddleware from '@/bot/middleware/authenticatorMiddleware';
 import menuComposer from '@/bot/menu';
 import BotContext, { SessionData } from '@/bot/BotContext';
 import { desc } from 'drizzle-orm';
-import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
 import { invoice as invoiceSchema } from '@/store/schema';
 import loggerMiddleware from '@/bot/middleware/logger';
+import { SearchPageDirection } from '@/@types/db';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) throw new Error('TELEGRAM_TOKEN is unset');
@@ -22,7 +22,7 @@ function initial(): SessionData {
 				limit: 12,
 				page: 1,
 				orderByColumns: [desc(invoiceSchema.createdAt)],
-				pageDirection: SearchInvoicesPageDirection.REVERSE
+				pageDirection: SearchPageDirection.REVERSE
 			}
 		}
 	};

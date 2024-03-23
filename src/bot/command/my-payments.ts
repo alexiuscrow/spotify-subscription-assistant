@@ -4,6 +4,7 @@ import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
 import { DateTime } from 'luxon';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
+import * as subscriberHistoryRepo from '@/store/repositories/subscriberHistoryRepo';
 import { desc, gt } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import logger from '@/logger';
@@ -56,8 +57,21 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			)
 		});
 
-		logger.info('notPayedInvoices');
-		logger.info(notPayedInvoices);
+		const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();
+
+		const firstItemIndex = 0;
+		const data = notPayedInvoices.map(invoice => {
+			const invoiceDate = DateTime.fromJSDate(invoice.createdAt);
+			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
+			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
+			return {
+				invoiceDate,
+				amountPerSubscriber
+			};
+		});
+
+		await logger.info('notPayedInvoices');
+		await logger.info(data);
 	}
 
 	const responseMsg = outputLines.join('\n');
