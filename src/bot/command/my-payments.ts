@@ -3,6 +3,7 @@ import BotContext from '@/bot/BotContext';
 import { getPaymentsForAllYearsBySubscriber } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
 import { DateTime } from 'luxon';
+import logger from '@/logger';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -22,6 +23,8 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			if (paymentStatus === true) {
 				const currentDate = DateTime.fromObject({ year: parseInt(year), month: parseInt(month) });
 				if (!latestDate || currentDate > latestDate) {
+					// noinspection TypeScriptUnresolvedReference
+					logger.info(`${currentDate.toFormat('LLLL yyyy')} > ${latestDate?.toFormat('LLLL yyyy')}`);
 					latestDate = currentDate;
 				}
 			}
