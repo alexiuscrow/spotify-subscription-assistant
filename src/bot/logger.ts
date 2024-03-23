@@ -3,7 +3,7 @@ import BotContext from '@/bot/BotContext';
 import { inspect } from 'node:util';
 
 const logger: Middleware<BotContext> = async (ctx, next) => {
-	console.log('Logger', inspect(ctx.session.user, { depth: null }));
+	console.log('Logger', inspect(ctx.message, { depth: null }));
 
 	await next();
 };
