@@ -51,7 +51,8 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			selection: gt(invoiceSchema.createdAt, latestPayedDate.toJSDate())
 		});
 
-		logger.info('notPayedInvoices', notPayedInvoices);
+		logger.info('notPayedInvoices');
+		logger.info(notPayedInvoices);
 	}
 
 	const responseMsg = outputLines.join('\n');
