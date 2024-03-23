@@ -60,7 +60,9 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 
 		const firstItemIndex = 0;
 		const datesAndAmountsPerSubscriber = notPayedInvoices.map(invoice => {
-			const invoiceDate = DateTime.fromJSDate(invoice.createdAt);
+			const invoiceDate = DateTime.fromJSDate(invoice.createdAt).set({
+				day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
+			});
 			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
 			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
 			const amount = Math.ceil(amountPerSubscriber * 100) / 100;
