@@ -9,7 +9,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 		return next();
 	}
 
-	if (!ctx.from) {
+	if (!ctx.from || !ctx.msg) {
 		return;
 	}
 
