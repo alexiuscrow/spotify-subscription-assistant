@@ -10,7 +10,6 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	}
 
 	if (!ctx.from) {
-		await ctx.reply('Вибачте, але я не можу знайти ваш профіль.');
 		return;
 	}
 
