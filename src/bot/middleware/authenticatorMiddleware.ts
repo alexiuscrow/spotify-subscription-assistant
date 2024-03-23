@@ -4,7 +4,7 @@ import * as subscriberRepo from '@/store/repositories/subscriberRepo';
 import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
 import BotContext from '@/bot/BotContext';
 
-const authenticator: Middleware<BotContext> = async (ctx, next) => {
+const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (ctx.session.user) {
 		return next();
 	}
@@ -63,4 +63,4 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 	await next();
 };
 
-export default authenticator;
+export default authenticatorMiddleware;
