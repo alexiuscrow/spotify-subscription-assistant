@@ -7,7 +7,6 @@ import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import * as subscriberHistoryRepo from '@/store/repositories/subscriberHistoryRepo';
 import { desc, gt } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
-import logger from '@/logger';
 
 const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -60,7 +59,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 		const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();
 
 		const firstItemIndex = 0;
-		const data = notPayedInvoices.map(invoice => {
+		const datesAndAmountsPerSubscriber = notPayedInvoices.map(invoice => {
 			const invoiceDate = DateTime.fromJSDate(invoice.createdAt);
 			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
 			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
@@ -70,8 +69,10 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			};
 		});
 
-		await logger.info('notPayedInvoices');
-		await logger.info(data);
+		for (const { invoiceDate, amountPerSubscriber } of datesAndAmountsPerSubscriber) {
+			const dateString = invoiceDate.setZone(process.env.LUXON_ZONE_NAME as string).toFormat('dd/LL/yy, HH:mm');
+			outputLines.push(`${markdownv2.escape(dateString)} — ${markdownv2.escape(String(amountPerSubscriber))} грн`);
+		}
 	}
 
 	const responseMsg = outputLines.join('\n');
