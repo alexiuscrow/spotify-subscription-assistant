@@ -6,6 +6,7 @@ import BotContext, { SessionData } from '@/bot/BotContext';
 import { desc } from 'drizzle-orm';
 import { SearchInvoicesPageDirection } from '@/store/repositories/invoiceRepo';
 import { invoice as invoiceSchema } from '@/store/schema';
+import logger from '@/bot/logger';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) throw new Error('TELEGRAM_TOKEN is unset');
@@ -28,6 +29,7 @@ function initial(): SessionData {
 }
 bot.use(session({ initial }));
 
+bot.use(logger);
 bot.use(authenticator);
 bot.use(menuComposer);
 bot.use(commands);
