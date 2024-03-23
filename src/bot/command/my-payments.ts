@@ -71,7 +71,8 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 
 		for (const { invoiceDate, amountPerSubscriber } of datesAndAmountsPerSubscriber) {
 			const dateString = invoiceDate.setZone(process.env.LUXON_ZONE_NAME as string).toFormat('dd/LL/yy, HH:mm');
-			outputLines.push(`${markdownv2.escape(dateString)} — ${markdownv2.escape(String(amountPerSubscriber))} грн`);
+			const amount = Math.round((amountPerSubscriber + Number.EPSILON) * 100) / 100;
+			outputLines.push(`${markdownv2.escape(dateString)} — ${markdownv2.escape(String(amount))} грн`);
 		}
 	}
 
