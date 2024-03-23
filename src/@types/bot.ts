@@ -8,9 +8,9 @@ interface Subscriber {
 interface UserSession {
 	id: number;
 	telegramId: number;
-	username?: string;
+	username: string | null;
 	firstName: string;
-	lastName?: string;
+	lastName: string | null;
 	role: 'regular' | 'admin';
 	status: 'active' | 'canceled';
 	createdAt: Date;

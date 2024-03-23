@@ -30,26 +30,26 @@ const authenticator: Middleware<BotContext> = async (ctx, next) => {
 					subscription.id,
 					allowedUserCriteriaId
 				);
-				// ctx.session.user = user as UserSession;
-				ctx.session.user = {
-					id: user.id,
-					telegramId: user.telegramId,
-					username: user.username,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					role: user.role,
-					status: user.status,
-					createdAt: user.createdAt
-				};
-				// ctx.session.user.subscriber = subscriber as Subscriber;
-				ctx.session.user.subscriber = subscriber
-					? {
-							id: subscriber.id,
-							userId: subscriber.userId,
-							subscriptionId: subscriber.subscriptionId,
-							spreadsheetSubscriberIndex: subscriber.spreadsheetSubscriberIndex
-						}
-					: null;
+				ctx.session.user = user as UserSession;
+				// ctx.session.user = {
+				// 	id: user.id,
+				// 	telegramId: user.telegramId,
+				// 	username: user.username,
+				// 	firstName: user.firstName,
+				// 	lastName: user.lastName,
+				// 	role: user.role,
+				// 	status: user.status,
+				// 	createdAt: user.createdAt
+				// };
+				ctx.session.user.subscriber = subscriber as Subscriber;
+				// ctx.session.user.subscriber = subscriber
+				// 	? {
+				// 			id: subscriber.id,
+				// 			userId: subscriber.userId,
+				// 			subscriptionId: subscriber.subscriptionId,
+				// 			spreadsheetSubscriberIndex: subscriber.spreadsheetSubscriberIndex
+				// 		}
+				// 	: null;
 			} catch (e) {
 				await ctx.reply('Щось пішло не так. Звернись до адміна');
 				if (typeof e === 'string') return ctx.reply('Помилка: ' + e);
