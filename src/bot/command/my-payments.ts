@@ -70,9 +70,18 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			};
 		});
 
+		outputLines.push('\n');
+		outputLines.push('Несплачені рахунки:');
+
 		for (const { date, amount } of datesAndAmountsPerSubscriber) {
-			const dateString = date.setZone(process.env.LUXON_ZONE_NAME as string).toFormat('dd/LL/yy, HH:mm');
-			outputLines.push(`${markdownv2.escape(dateString)} — ${markdownv2.escape(String(amount))} грн`);
+			const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
+			const formattedEndDate = endDate.toFormat('dd/LL/yy');
+			const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
+			outputLines.push(
+				`${markdownv2.escape(formattedStartDate)} - ${markdownv2.escape(
+					formattedEndDate
+				)} — ${markdownv2.escape(String(amount))} грн`
+			);
 		}
 	}
 
