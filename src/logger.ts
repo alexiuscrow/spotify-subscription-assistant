@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston, { format } from 'winston';
 import { LoggingWinston } from '@google-cloud/logging-winston';
 
 const googleCloudLogger = new LoggingWinston({
@@ -16,7 +16,8 @@ const googleCloudLogger = new LoggingWinston({
 
 const logger = winston.createLogger({
 	level: 'info',
-	transports: [new winston.transports.Console(), googleCloudLogger]
+	transports: [new winston.transports.Console(), googleCloudLogger],
+	format: format.json()
 });
 
 export default logger;
