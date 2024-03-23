@@ -38,7 +38,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 
 	if (latestDate) {
 		outputLines.push(
-			`Останній платіж було здійснено за перідод до ${markdownv2.bold(latestDate.toFormat('dd MMMM, yyyy'))}`
+			`Останній платіж було здійснено за період до ${markdownv2.bold(latestDate.toFormat('dd MMMM, yyyy'))}`
 		);
 	} else {
 		outputLines.push('Платежів не знайдено');
