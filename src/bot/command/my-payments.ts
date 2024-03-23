@@ -65,7 +65,7 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			});
 			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
 			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
-			const amount = Math.ceil(amountPerSubscriber * 100) / 100;
+			const amount = Math.ceil(amountPerSubscriber);
 			return {
 				date: invoiceDate,
 				amount
@@ -83,6 +83,9 @@ const myPaymentsCommand: Middleware<BotContext> = async ctx => {
 			outputLines.push(markdownv2.escape(`${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`));
 		}
 	}
+
+	outputLines.push('\n');
+	outputLines.push(markdownv2.italic('* Всі суми платежів округлені до 1 гривні'));
 
 	const responseMsg = outputLines.join('\n');
 	return ctx.reply(responseMsg, { parse_mode: 'MarkdownV2' });
