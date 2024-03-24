@@ -58,6 +58,12 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 			return myStatusCommand(ctx, next);
 		});
 	}
+
+	range.row();
+	range.url(
+		'Google таблиця',
+		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
+	);
 });
 
 export default debtPagination;
