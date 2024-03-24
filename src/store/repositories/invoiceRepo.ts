@@ -130,7 +130,7 @@ export const getDebts = async (criteria: GetDebtsCriteria) => {
 		});
 		let historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
 		if (!historyPoint) {
-			historyPoint = subscriberHistory.at(-1);
+			historyPoint = subscriberHistory[subscriberHistory.length - 1];
 
 			if (!historyPoint) {
 				throw new Error('Subscriber history is empty');
