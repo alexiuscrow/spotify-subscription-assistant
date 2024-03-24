@@ -9,6 +9,7 @@ import { gt } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import debtPaginationMenu from '@/bot/menu/debtPagination';
 import logger from '@/logger';
+import generatePageLines from '@/bot/utils/page';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	await logger.debug(`myStatusCommand`);
@@ -32,10 +33,6 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			? ctx.session.debt.latestPayedDate
 			: await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
-	await logger.debug(
-		`myStatusCommand: latestPayedDate: ${latestPayedDate}, spreadsheetSubscriberIndex: ${ctx.session.user.subscriber.spreadsheetSubscriberIndex}`
-	);
-
 	if (!latestPayedDate) {
 		outputLines.push('Платежів не знайдено');
 	} else {
@@ -56,9 +53,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			)
 		});
 
-		await logger.debug(items);
-
-		await logger.debug(pagination);
+		const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
 
 		const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();
 
@@ -77,26 +72,23 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		});
 
 		outputLines.push('\n');
-		outputLines.push('Несплачені рахунки:');
+		outputLines.push(
+			...generatePageLines({
+				title: 'Несплачені рахунки',
+				generatePaginationInfo: () =>
+					`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(items as Array<object>).length} з ${pagination.total}.`,
+				items: datesAndAmountsPerSubscriber,
+				generateItemInfo: ({ date, amount }: (typeof datesAndAmountsPerSubscriber)[number]) => {
+					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
+					const formattedEndDate = endDate.toFormat('dd/LL/yy');
+					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
+					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
+				},
+				textAfterItemList: 'Всі суми округлені до 1 гривні',
+				showPaginationTips: isPaginationMenuNeeded
+			})
+		);
 
-		for (const { date, amount } of datesAndAmountsPerSubscriber) {
-			const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
-			const formattedEndDate = endDate.toFormat('dd/LL/yy');
-			const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
-
-			outputLines.push(markdownv2.escape(`${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`));
-		}
-
-		outputLines.push('\n');
-		outputLines.push(markdownv2.italic('Всі суми округлені до 1 гривні'));
-
-		const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
-		if (isPaginationMenuNeeded) {
-			outputLines.push('\n');
-			outputLines.push(
-				markdownv2.italic('Для перегляду попередніх або наступних платежів використовуйте кнопки нижче')
-			);
-		}
 		const responseMsg = outputLines.join('\n');
 		await ctx.reply(responseMsg, {
 			parse_mode: 'MarkdownV2',
