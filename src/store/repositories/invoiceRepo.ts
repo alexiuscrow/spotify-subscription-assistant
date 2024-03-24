@@ -3,7 +3,6 @@ import { db } from '@/store/db';
 import { StatementItem } from '@/@types/monobank';
 import { withPagination } from '@/store/utils';
 import { count, desc } from 'drizzle-orm';
-import { PgSelect } from 'drizzle-orm/pg-core';
 import { SearchCriteria, SearchPageDirection } from '@/@types/db';
 
 export const createInvoice = async (statementItem: StatementItem, subscriptionId: number) => {
@@ -36,10 +35,11 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 		selection
 	} = criteria || {};
 
+	type Invoice = typeof invoiceSchema.$inferSelect;
+
 	return db.transaction(async trx => {
 		const query = trx.select().from(invoiceSchema).where(selection);
-		const dynamicQuery = query.$dynamic();
-		const items = await withPagination(dynamicQuery as PgSelect, limit, page, orderByColumns);
+		const items = await withPagination(query.$dynamic(), limit, page, orderByColumns);
 		const firstIndex = 0;
 		const total = (await trx.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
 
@@ -56,7 +56,7 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 			pageDirection === SearchPageDirection.STRAIGHT ? straightDirection.hasPrev : straightDirection.hasNext;
 
 		return {
-			items,
+			items: items as Invoice[],
 			pagination: {
 				limit,
 				orderByColumns,

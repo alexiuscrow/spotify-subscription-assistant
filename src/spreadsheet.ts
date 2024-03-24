@@ -6,6 +6,7 @@ import {
 	SpreadsheetSubscriber,
 	SpreadsheetPaymentsByYear
 } from '@/@types/spreadsheets';
+import { DateTime } from 'luxon';
 
 const auth = new google.auth.GoogleAuth({
 	scopes: JSON.parse(process.env.GOOGLE_AUTH_SCOPES as string),
@@ -104,4 +105,32 @@ export const getPaymentsFromSheetsBySubscriber = async (
 export const getPaymentsForAllYearsBySubscriber = async (subscriberSpreadsheetPosition: number) => {
 	const sheetTitles = await getSheetTitles();
 	return getPaymentsFromSheetsBySubscriber(sheetTitles, subscriberSpreadsheetPosition);
+};
+
+export const getLatestPayedDate = async (subscriberSpreadsheetPosition: number) => {
+	let latestPayedDate: DateTime | null = null;
+
+	const payments = await getPaymentsForAllYearsBySubscriber(subscriberSpreadsheetPosition);
+
+	for (const year in payments) {
+		const subscriber = payments[year];
+		for (const month in subscriber) {
+			const paymentStatus = subscriber[month];
+			if (paymentStatus === true) {
+				const currentDate = DateTime.fromObject(
+					{
+						year: parseInt(year),
+						month: parseInt(month) + 1,
+						day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
+					},
+					{ locale: process.env.DATETIME_LOCALE as string }
+				);
+				if (!latestPayedDate || currentDate > latestPayedDate) {
+					latestPayedDate = currentDate;
+				}
+			}
+		}
+	}
+
+	return latestPayedDate;
 };

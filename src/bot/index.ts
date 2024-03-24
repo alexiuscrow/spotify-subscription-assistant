@@ -24,6 +24,14 @@ function initial(): SessionData {
 				orderByColumns: [desc(invoiceSchema.createdAt)],
 				pageDirection: SearchPageDirection.REVERSE
 			}
+		},
+		debt: {
+			pagination: {
+				limit: 2,
+				page: 1,
+				orderByColumns: [desc(invoiceSchema.createdAt)],
+				pageDirection: SearchPageDirection.REVERSE
+			}
 		}
 	};
 }

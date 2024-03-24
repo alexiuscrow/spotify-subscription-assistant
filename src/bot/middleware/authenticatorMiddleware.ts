@@ -2,7 +2,7 @@ import { Middleware } from 'grammy';
 import * as userRepo from '@/store/repositories/userRepo';
 import * as subscriberRepo from '@/store/repositories/subscriberRepo';
 import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
-import BotContext from '@/bot/BotContext';
+import BotContext, { Subscriber, UserSession } from '@/bot/BotContext';
 
 const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (ctx.session.user) {

@@ -2,7 +2,7 @@ import { MiddlewareFn } from 'grammy';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import { DateTime } from 'luxon';
 import { markdownv2 } from 'telegram-format';
-import invoicePagination from '@/bot/menu/invoicePagination';
+import invoicePaginationMenu from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 
 const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
@@ -41,7 +41,7 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	await ctx.reply(responseMsg, {
 		parse_mode: 'MarkdownV2',
-		reply_markup: isPaginationMenuNeeded ? invoicePagination : undefined
+		reply_markup: isPaginationMenuNeeded ? invoicePaginationMenu : undefined
 	});
 };
 

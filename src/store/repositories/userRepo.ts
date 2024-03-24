@@ -7,14 +7,14 @@ import {
 	user as userSchema,
 	user
 } from '@/store/schema';
-import { User } from '@grammyjs/types';
+import { User as TelegramUser } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 export const getUserByTelegramId = async (id: number) => {
 	return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 };
 
-export const getAllowedUserCriteriaId = async (user: User) => {
+export const getAllowedUserCriteriaId = async (user: TelegramUser) => {
 	const { rows } = await db.execute(
 		sql<number | null>`select case when ${exists(
 			db
@@ -41,12 +41,13 @@ export const getAllowedUserCriteriaId = async (user: User) => {
 };
 
 export const createUserAndSubscriberIfNeeded = async (
-	telegramUser: User,
+	telegramUser: TelegramUser,
 	subscriptionId: number,
 	allowedUserCriteriaId: number
 ) => {
 	const isAdmin = telegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 	type NewUser = typeof userSchema.$inferInsert;
+	type User = typeof userSchema.$inferSelect;
 	type Subscriber = typeof subscriberSchema.$inferSelect;
 
 	return db.transaction(async trx => {
@@ -85,7 +86,7 @@ export const createUserAndSubscriberIfNeeded = async (
 			)[0];
 		}
 
-		return { user, subscriber };
+		return { user: user as User, subscriber };
 	});
 };
 
