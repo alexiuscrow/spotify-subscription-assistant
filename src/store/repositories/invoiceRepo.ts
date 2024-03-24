@@ -44,7 +44,7 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 		const items = await withPagination(query.$dynamic(), limit, page, orderByColumns);
 		const firstIndex = 0;
 		const totalSelect = trx.select({ total: count() }).from(invoiceSchema);
-		const total = (selection ? await totalSelect : totalSelect.where(selection))[firstIndex].total;
+		const total = (await (selection ? totalSelect : totalSelect.where(selection)))[firstIndex].total;
 
 		const totalPages = Math.ceil(total / limit);
 
