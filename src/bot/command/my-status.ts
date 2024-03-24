@@ -8,8 +8,6 @@ import logger from '@/logger';
 import generatePageLines from '@/bot/utils/page';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
-	await logger.debug(`myStatusCommand`);
-
 	if (ctx.session.user?.role === 'admin') {
 		await logger.debug(
 			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, userRole: ${ctx.session.user?.role}`
