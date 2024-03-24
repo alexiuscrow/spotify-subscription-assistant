@@ -5,10 +5,11 @@ import * as subscriptionRepo from './subscriptionRepo';
 
 export const getSubscriberHistory = async () => {
 	const subscription = await subscriptionRepo.getSubscription();
-	return db.query.subscriberHistory.findMany({
+	type SubscriberHistory = typeof subscriberHistory.$inferSelect;
+	return (await db.query.subscriberHistory.findMany({
 		limit: 1_000,
 		offset: 0,
 		orderBy: [desc(subscriberHistory.date)],
 		where: eq(subscriberHistory.subscriptionId, subscription.id)
-	});
+	})) as SubscriberHistory[];
 };
