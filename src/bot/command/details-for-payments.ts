@@ -4,7 +4,7 @@ import { markdownv2 } from 'telegram-format';
 
 const detailsForPaymentsCommand: Middleware<BotContext> = async ctx => {
 	const outputLines = [
-		`${markdownv2.bold('Реквізити для платежів')} `,
+		markdownv2.bold('Реквізити для платежів'),
 		'',
 		'💳 Номер банківської карти:',
 		process.env.MONOBANK_PAYMENT_CREDIT_CARD,
@@ -13,7 +13,9 @@ const detailsForPaymentsCommand: Middleware<BotContext> = async ctx => {
 		process.env.MONOBANK_PAYMENT_LINK
 	];
 
-	await ctx.reply(outputLines.join('\n'));
+	await ctx.reply(outputLines.join('\n'), {
+		parse_mode: 'MarkdownV2'
+	});
 };
 
 export default detailsForPaymentsCommand;
