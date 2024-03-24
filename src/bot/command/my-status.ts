@@ -71,7 +71,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			};
 		});
 
-		outputLines.push('\n');
+		outputLines.push('');
 		outputLines.push(
 			...generatePageLines({
 				title: 'Несплачені рахунки',
