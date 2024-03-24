@@ -52,7 +52,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		...generatePageLines({
 			title: 'Несплачені рахунки',
 			generatePaginationInfo: () =>
-				`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(debts as Array<object>).length} з ${pagination.total}.`,
+				`Сторінка ${pagination.page} з ${pagination.totalPages}. Нарахування ${(debts as Array<object>).length} з ${pagination.total}.`,
 			items: debts,
 			generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
 				const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
