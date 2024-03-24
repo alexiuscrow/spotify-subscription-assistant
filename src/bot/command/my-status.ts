@@ -2,11 +2,7 @@ import { MiddlewareFn } from 'grammy';
 import BotContext from '@/bot/BotContext';
 import { getLatestPayedDate } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
-import { DateTime } from 'luxon';
 import * as invoiceRepo from '@/store/repositories/invoiceRepo';
-import * as subscriberHistoryRepo from '@/store/repositories/subscriberHistoryRepo';
-import { gt } from 'drizzle-orm';
-import { invoice as invoiceSchema } from '@/store/schema';
 import debtPaginationMenu from '@/bot/menu/debtPagination';
 import logger from '@/logger';
 import generatePageLines from '@/bot/utils/page';
@@ -40,51 +36,34 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPayedDate.toFormat('dd MMMM, yyyy'))}`
 		);
 		const sessionPagination = ctx.session.debt.pagination;
-		const { items, pagination } = await invoiceRepo.getInvoices({
+		const { items: debts, pagination } = await invoiceRepo.getDebts({
 			limit: sessionPagination.limit,
 			page: sessionPagination.page,
 			orderByColumns: sessionPagination.orderByColumns,
 			pageDirection: sessionPagination.pageDirection,
-			selection: gt(
-				invoiceSchema.createdAt,
-				DateTime.fromISO(<string>latestPayedDate.toISODate())
-					.plus({ month: 1 })
-					.toJSDate()
-			)
+			latestPayedDate
 		});
 
 		const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
-
-		const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();
-
-		const firstItemIndex = 0;
-		const datesAndAmountsPerSubscriber = items.map(invoice => {
-			const invoiceDate = DateTime.fromJSDate(invoice.createdAt).set({
-				day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
-			});
-			const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
-			const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
-			const amount = Math.ceil(amountPerSubscriber);
-			return {
-				date: invoiceDate,
-				amount
-			};
-		});
+		const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
 
 		outputLines.push('');
 		outputLines.push(
 			...generatePageLines({
 				title: 'Несплачені рахунки',
 				generatePaginationInfo: () =>
-					`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(items as Array<object>).length} з ${pagination.total}.`,
-				items: datesAndAmountsPerSubscriber,
-				generateItemInfo: ({ date, amount }: (typeof datesAndAmountsPerSubscriber)[number]) => {
+					`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(debts as Array<object>).length} з ${pagination.total}.`,
+				items: debts,
+				generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
 					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
 					const formattedEndDate = endDate.toFormat('dd/LL/yy');
 					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
 					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
 				},
-				textAfterItemList: markdownv2.italic(`${markdownv2.escape('*')} Всі суми округлені до 1 гривні`),
+				dataAfterItemList: [
+					`Загальна сума заборгованності: ${debtSum} грн`,
+					markdownv2.italic(`${markdownv2.escape('*')} Всі суми округлені до 1 гривні`)
+				],
 				showPaginationTips: isPaginationMenuNeeded
 			})
 		);

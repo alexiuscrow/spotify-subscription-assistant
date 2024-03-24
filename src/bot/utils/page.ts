@@ -6,7 +6,7 @@ interface Page<T> {
 	generatePaginationInfo?: () => string;
 	generateItemInfo: (item: T) => string;
 	showPaginationTips?: boolean;
-	textAfterItemList?: string;
+	dataAfterItemList?: string | string[];
 }
 
 const generatePageLines = <T>(page: Page<T>) => {
@@ -16,7 +16,7 @@ const generatePageLines = <T>(page: Page<T>) => {
 		items,
 		generateItemInfo,
 		showPaginationTips = false,
-		textAfterItemList
+		dataAfterItemList
 	} = page;
 	const output: string[] = [];
 
@@ -32,9 +32,14 @@ const generatePageLines = <T>(page: Page<T>) => {
 		output.push(markdownv2.escape(generateItemInfo(item)));
 	}
 
-	if (textAfterItemList) {
+	if (dataAfterItemList) {
 		output.push('');
-		output.push(textAfterItemList);
+
+		if (Array.isArray(dataAfterItemList)) {
+			output.push(dataAfterItemList.join('\n'));
+		} else {
+			output.push(dataAfterItemList);
+		}
 	}
 
 	if (showPaginationTips) {
