@@ -5,7 +5,7 @@ const startCommand: Middleware<BotContext> = async ctx => {
 	await ctx.api.setMyCommands([
 		{ command: 'my_status', description: 'Мої платежі' },
 		{ command: 'invoices', description: 'Списання за підписку' },
-		{ command: 'help', description: 'Показати довідку' }
+		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
 	]);
 };
 

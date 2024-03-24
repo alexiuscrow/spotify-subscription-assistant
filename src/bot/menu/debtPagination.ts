@@ -34,7 +34,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	if (debtSum >= 100) {
 		const paymentComment = encodeURIComponent(
-			`#Spotify_subscription; U:${ctx.session.user.id} (${ctx.session.user.firstName})`
+			`#spotify_subscription; u:${ctx.session.user.id} (${ctx.session.user.firstName})`
 		);
 		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
 		range.row();
