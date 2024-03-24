@@ -61,7 +61,8 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
 				},
 				dataAfterItemList: [
-					`Загальна сума заборгованності: ${debtSum} грн`,
+					`Сума заборгованності: ${debtSum} грн`,
+					'',
 					markdownv2.italic(`${markdownv2.escape('*')} Всі суми округлені до 1 гривні`)
 				],
 				showPaginationTips: isPaginationMenuNeeded
