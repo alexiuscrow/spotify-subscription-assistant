@@ -37,6 +37,7 @@ export interface SessionData {
 	};
 	debt: {
 		latestPayedDate?: DateTime | null | void;
+		sum?: number;
 		pagination: Pagination & {
 			selection?: ((aliases: ColumnsSelection) => SQL | undefined) | SQL | undefined;
 		};

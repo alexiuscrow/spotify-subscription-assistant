@@ -30,6 +30,14 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 			: undefined
 	});
 
+	const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
+
+	if (debtSum >= 100) {
+		const paymentComment = encodeURI(`#Spotify_subscription; U:${ctx.session.user.id} (${ctx.session.user.firstName})`);
+		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
+		range.row();
+	}
+
 	if (hasPrev) {
 		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
 			if (ctx.session.debt.pagination.pageDirection === SearchPageDirection.STRAIGHT)

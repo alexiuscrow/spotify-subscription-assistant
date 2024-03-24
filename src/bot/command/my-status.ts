@@ -45,7 +45,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	});
 
 	const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
-	const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
+	const debtSum = ctx.session.debt.sum || (await invoiceRepo.getDebtsSum({ latestPayedDate }));
 
 	outputLines.push('');
 	outputLines.push(
@@ -75,6 +75,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
 	});
 	ctx.session.debt.latestPayedDate = undefined;
+	ctx.session.debt.sum = undefined;
 };
 
 export default myStatusCommand;
