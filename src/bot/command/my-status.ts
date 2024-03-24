@@ -44,7 +44,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		latestPayedDate
 	});
 
-	const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
+	const isPaginationMenuWillBeShowed = pagination.hasPrev || pagination.hasNext;
 	const debtSum = ctx.session.debt.sum || (await invoiceRepo.getDebtsSum({ latestPayedDate }));
 
 	outputLines.push('');
@@ -65,7 +65,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 				'',
 				markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
 			],
-			showPaginationTips: isPaginationMenuNeeded
+			showPaginationTips: isPaginationMenuWillBeShowed
 		})
 	);
 
