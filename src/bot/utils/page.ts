@@ -34,7 +34,7 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	if (textAfterItemList) {
 		output.push('');
-		output.push(markdownv2.escape(textAfterItemList));
+		output.push(textAfterItemList);
 	}
 
 	if (showPaginationTips) {
