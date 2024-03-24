@@ -7,7 +7,7 @@ const detailsForPaymentsCommand: Middleware<BotContext> = async ctx => {
 		markdownv2.bold('Реквізити для платежів'),
 		'',
 		'💳 Номер банківської карти:',
-		process.env.MONOBANK_PAYMENT_CREDIT_CARD,
+		`${process.env.MONOBANK_PAYMENT_CREDIT_CARD} (Monobank)`,
 		'',
 		'🔗 Якщо сума платежу більше ніж 100 грн, то можна скористатися посиланням:',
 		process.env.MONOBANK_PAYMENT_LINK
