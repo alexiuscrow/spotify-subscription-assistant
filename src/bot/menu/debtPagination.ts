@@ -7,6 +7,7 @@ import { SearchPageDirection } from '@/@types/db';
 import { getLatestPayedDate } from '@/spreadsheet';
 import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
+import { markdownv2 } from 'telegram-format';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
@@ -61,7 +62,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	range.row();
 	range.url(
-		'Google таблиця',
+		`${markdownv2.tgEmoji('📄', '5319080489426887527')} Google таблиця`,
 		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
 	);
 });
