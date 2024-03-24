@@ -19,24 +19,19 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	const latestPayedDate = await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
-	if (!latestPayedDate) {
-		await logger.debug(
-			`debtPagination: Платежів не знайдено, latestPayedDate: ${latestPayedDate}, spreadsheetSubscriberIndex: ${ctx.session.user.subscriber.spreadsheetSubscriberIndex}`
-		);
-		return;
-	}
-
 	const pagination = ctx.session.debt.pagination;
 	const { hasNext, hasPrev } = await invoiceRepo.getAllowedInvoicePaginationOptions({
 		limit: pagination.limit,
 		page: pagination.page,
 		pageDirection: pagination.pageDirection,
-		selection: gt(
-			invoiceSchema.createdAt,
-			DateTime.fromISO(<string>latestPayedDate.toISODate())
-				.plus({ month: 1 })
-				.toJSDate()
-		)
+		selection: latestPayedDate
+			? gt(
+					invoiceSchema.createdAt,
+					DateTime.fromISO(<string>latestPayedDate.toISODate())
+						.plus({ month: 1 })
+						.toJSDate()
+				)
+			: undefined
 	});
 
 	if (hasPrev) {

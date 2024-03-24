@@ -99,7 +99,7 @@ export const getAllInvoices = async ({
 };
 
 interface GetDebtsCriteria extends Omit<SearchCriteria, 'selection'> {
-	latestPayedDate: DateTime;
+	latestPayedDate: DateTime | null | void;
 }
 
 interface Debt {
@@ -112,12 +112,14 @@ export const getDebts = async (criteria: GetDebtsCriteria) => {
 		page: criteria.page,
 		orderByColumns: criteria.orderByColumns,
 		pageDirection: criteria.pageDirection,
-		selection: gt(
-			invoiceSchema.createdAt,
-			DateTime.fromISO(<string>criteria.latestPayedDate.toISODate())
-				.plus({ month: 1 })
-				.toJSDate()
-		)
+		selection: criteria.latestPayedDate
+			? gt(
+					invoiceSchema.createdAt,
+					DateTime.fromISO(<string>criteria.latestPayedDate.toISODate())
+						.plus({ month: 1 })
+						.toJSDate()
+				)
+			: undefined
 	});
 
 	const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();

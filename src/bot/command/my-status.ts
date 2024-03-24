@@ -29,53 +29,54 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			? ctx.session.debt.latestPayedDate
 			: await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
-	if (!latestPayedDate) {
-		outputLines.push('Платежів не знайдено');
-	} else {
+	if (latestPayedDate) {
 		outputLines.push(
 			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPayedDate.toFormat('dd MMMM, yyyy'))}`
 		);
-		const sessionPagination = ctx.session.debt.pagination;
-		const { items: debts, pagination } = await invoiceRepo.getDebts({
-			limit: sessionPagination.limit,
-			page: sessionPagination.page,
-			orderByColumns: sessionPagination.orderByColumns,
-			pageDirection: sessionPagination.pageDirection,
-			latestPayedDate
-		});
-
-		const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
-		const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
-
-		outputLines.push('');
-		outputLines.push(
-			...generatePageLines({
-				title: 'Несплачені рахунки',
-				generatePaginationInfo: () =>
-					`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(debts as Array<object>).length} з ${pagination.total}.`,
-				items: debts,
-				generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
-					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
-					const formattedEndDate = endDate.toFormat('dd/LL/yy');
-					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
-					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
-				},
-				dataAfterItemList: [
-					`Сума заборгованності: ${debtSum} грн`,
-					'',
-					markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
-				],
-				showPaginationTips: isPaginationMenuNeeded
-			})
-		);
-
-		const responseMsg = outputLines.join('\n');
-		await ctx.reply(responseMsg, {
-			parse_mode: 'MarkdownV2',
-			reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
-		});
-		ctx.session.debt.latestPayedDate = undefined;
+	} else {
+		outputLines.push('Платежі не знайдені');
 	}
+
+	const sessionPagination = ctx.session.debt.pagination;
+	const { items: debts, pagination } = await invoiceRepo.getDebts({
+		limit: sessionPagination.limit,
+		page: sessionPagination.page,
+		orderByColumns: sessionPagination.orderByColumns,
+		pageDirection: sessionPagination.pageDirection,
+		latestPayedDate
+	});
+
+	const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
+	const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
+
+	outputLines.push('');
+	outputLines.push(
+		...generatePageLines({
+			title: 'Несплачені рахунки',
+			generatePaginationInfo: () =>
+				`Сторінка ${pagination.page} з ${pagination.totalPages}. Рахунки ${(debts as Array<object>).length} з ${pagination.total}.`,
+			items: debts,
+			generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
+				const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
+				const formattedEndDate = endDate.toFormat('dd/LL/yy');
+				const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
+				return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
+			},
+			dataAfterItemList: [
+				`Сума заборгованності: ${debtSum} грн`,
+				'',
+				markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
+			],
+			showPaginationTips: isPaginationMenuNeeded
+		})
+	);
+
+	const responseMsg = outputLines.join('\n');
+	await ctx.reply(responseMsg, {
+		parse_mode: 'MarkdownV2',
+		reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
+	});
+	ctx.session.debt.latestPayedDate = undefined;
 };
 
 export default myStatusCommand;
