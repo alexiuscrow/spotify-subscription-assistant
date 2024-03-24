@@ -69,8 +69,6 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		})
 	);
 
-	outputLines.push(markdownv2.tgEmoji('📄', '5319080489426887527'));
-
 	const responseMsg = outputLines.join('\n');
 	await ctx.reply(responseMsg, {
 		parse_mode: 'MarkdownV2',

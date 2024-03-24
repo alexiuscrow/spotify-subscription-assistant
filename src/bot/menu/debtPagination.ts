@@ -58,11 +58,10 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 			`#spotify_subscription; u:${ctx.session.user.id} (${ctx.session.user.firstName})`
 		);
 		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
-		range.row();
 	}
 
 	range.url(
-		'Переглянути платежі у Google таблиці',
+		'📄 Платежі у Google таблиці',
 		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
 	);
 });
