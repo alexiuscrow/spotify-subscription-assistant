@@ -15,7 +15,7 @@ const googleCloudLogger = new LoggingWinston({
 });
 
 const logger = winston.createLogger({
-	level: 'info',
+	level: 'debug',
 	transports: [new winston.transports.Console(), googleCloudLogger],
 	format: format.json()
 });
