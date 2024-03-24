@@ -72,7 +72,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	const responseMsg = outputLines.join('\n');
 	await ctx.reply(responseMsg, {
 		parse_mode: 'MarkdownV2',
-		reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
+		reply_markup: debtPaginationMenu
 	});
 	ctx.session.debt.latestPayedDate = undefined;
 	ctx.session.debt.sum = undefined;
