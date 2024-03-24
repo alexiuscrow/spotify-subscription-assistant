@@ -43,7 +43,8 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 		const query = trx.select().from(invoiceSchema).where(selection);
 		const items = await withPagination(query.$dynamic(), limit, page, orderByColumns);
 		const firstIndex = 0;
-		const total = (await trx.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
+		const totalSelect = trx.select({ total: count() }).from(invoiceSchema);
+		const total = (selection ? await totalSelect : totalSelect.where(selection))[firstIndex].total;
 
 		const totalPages = Math.ceil(total / limit);
 
@@ -106,6 +107,7 @@ interface Debt {
 	date: DateTime;
 	amount: number;
 }
+
 export const getDebts = async (criteria: GetDebtsCriteria) => {
 	const { items: invoices, pagination } = await getInvoices({
 		limit: criteria.limit,
