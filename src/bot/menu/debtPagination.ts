@@ -7,15 +7,22 @@ import { SearchPageDirection } from '@/@types/db';
 import { getLatestPayedDate } from '@/spreadsheet';
 import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
+import logger from '@/logger';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
+		await logger.debug(
+			`debtPagination: Ця команда доступна тільки для звичайних користувачів, userRole: ${ctx.session.user?.role}, subscriber: ${ctx.session.user?.subscriber}`
+		);
 		return;
 	}
 
 	const latestPayedDate = await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
 	if (!latestPayedDate) {
+		await logger.debug(
+			`debtPagination: Платежів не знайдено, latestPayedDate: ${latestPayedDate}, spreadsheetSubscriberIndex: ${ctx.session.user.subscriber.spreadsheetSubscriberIndex}`
+		);
 		return;
 	}
 

@@ -8,11 +8,20 @@ import * as subscriberHistoryRepo from '@/store/repositories/subscriberHistoryRe
 import { gt } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import debtPaginationMenu from '@/bot/menu/debtPagination';
+import logger from '@/logger';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
+	await logger.debug(`myStatusCommand`);
+
 	if (ctx.session.user?.role === 'admin') {
+		await logger.debug(
+			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, userRole: ${ctx.session.user?.role}`
+		);
 		return ctx.reply('Ця команда доступна тільки для звичайних користувачів.');
 	} else if (!ctx.session.user?.subscriber) {
+		await logger.debug(
+			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, subscriber: ${ctx.session.user?.subscriber}`
+		);
 		return ctx.reply('Щось пішло не так. Звернись до адміна.');
 	}
 
@@ -22,6 +31,10 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		ctx.session.debt.latestPayedDate !== undefined
 			? ctx.session.debt.latestPayedDate
 			: await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
+
+	await logger.debug(
+		`myStatusCommand: latestPayedDate: ${latestPayedDate}, spreadsheetSubscriberIndex: ${ctx.session.user.subscriber.spreadsheetSubscriberIndex}`
+	);
 
 	if (!latestPayedDate) {
 		outputLines.push('Платежів не знайдено');
@@ -42,6 +55,10 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 					.toJSDate()
 			)
 		});
+
+		await logger.debug(items);
+
+		await logger.debug(pagination);
 
 		const subscriberHistory = await subscriberHistoryRepo.getSubscriberHistory();
 
@@ -82,8 +99,8 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		}
 		const responseMsg = outputLines.join('\n');
 		await ctx.reply(responseMsg, {
-			parse_mode: 'MarkdownV2'
-			// reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
+			parse_mode: 'MarkdownV2',
+			reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
 		});
 		ctx.session.debt.latestPayedDate = undefined;
 	}
