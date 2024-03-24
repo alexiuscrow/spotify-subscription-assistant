@@ -48,7 +48,8 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 		let total = 0;
 		try {
 			total = (await trx.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
-		} catch (e: Error) {
+		} catch (e) {
+			await logger.error('Error while getting total count of invoices');
 			await logger.error(e.stack);
 			throw e;
 		}
@@ -142,7 +143,8 @@ export const getDebts = async (criteria: GetDebtsCriteria) => {
 		let amountPerSubscriber: number;
 		try {
 			amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
-		} catch (e: Error) {
+		} catch (e) {
+			logger.error('Error while calculating amountPerSubscriber');
 			logger.error(e.stack);
 			throw e;
 		}
