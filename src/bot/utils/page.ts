@@ -22,7 +22,7 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	output.push(markdownv2.bold(title));
 
-	if (generatePaginationInfo) {
+	if (generatePaginationInfo && showPaginationTips) {
 		output.push(markdownv2.italic(markdownv2.escape(generatePaginationInfo())));
 	}
 
