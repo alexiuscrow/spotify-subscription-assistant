@@ -39,7 +39,11 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	if (showPaginationTips) {
 		output.push('');
-		output.push(markdownv2.italic('Для перегляду попередніх або наступних платежів використовуйте кнопки нижче'));
+		output.push(
+			markdownv2.italic(
+				markdownv2.escape('*') + ' Для перегляду попередніх або наступних платежів використовуйте кнопки нижче'
+			)
+		);
 	}
 
 	return output;

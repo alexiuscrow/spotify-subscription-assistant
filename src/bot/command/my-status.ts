@@ -84,7 +84,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
 					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
 				},
-				textAfterItemList: markdownv2.italic('Всі суми округлені до 1 гривні'),
+				textAfterItemList: markdownv2.italic(`${markdownv2.escape('*')} Всі суми округлені до 1 гривні`),
 				showPaginationTips: isPaginationMenuNeeded
 			})
 		);
