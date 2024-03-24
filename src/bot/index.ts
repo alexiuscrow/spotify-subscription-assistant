@@ -27,7 +27,7 @@ function initial(): SessionData {
 		},
 		debt: {
 			pagination: {
-				limit: 2,
+				limit: 12,
 				page: 1,
 				orderByColumns: [desc(invoiceSchema.createdAt)],
 				pageDirection: SearchPageDirection.REVERSE
