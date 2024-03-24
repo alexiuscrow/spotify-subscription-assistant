@@ -7,7 +7,6 @@ import { SearchPageDirection } from '@/@types/db';
 import { getLatestPayedDate } from '@/spreadsheet';
 import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
-import { markdownv2 } from 'telegram-format';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
@@ -31,16 +30,6 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 			: undefined
 	});
 
-	const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
-
-	if (debtSum >= 100) {
-		const paymentComment = encodeURIComponent(
-			`#spotify_subscription; u:${ctx.session.user.id} (${ctx.session.user.firstName})`
-		);
-		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
-		range.row();
-	}
-
 	if (hasPrev) {
 		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
 			if (ctx.session.debt.pagination.pageDirection === SearchPageDirection.STRAIGHT)
@@ -61,8 +50,19 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 	}
 
 	range.row();
+
+	const debtSum = await invoiceRepo.getDebtsSum({ latestPayedDate });
+
+	if (debtSum >= 100) {
+		const paymentComment = encodeURIComponent(
+			`#spotify_subscription; u:${ctx.session.user.id} (${ctx.session.user.firstName})`
+		);
+		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
+		range.row();
+	}
+
 	range.url(
-		`${markdownv2.tgEmoji('📄', '5319080489426887527')} Google таблиця`,
+		'Переглянути платежі у Google таблиці',
 		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
 	);
 });
