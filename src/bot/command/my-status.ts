@@ -82,8 +82,8 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		}
 		const responseMsg = outputLines.join('\n');
 		await ctx.reply(responseMsg, {
-			parse_mode: 'MarkdownV2',
-			reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
+			parse_mode: 'MarkdownV2'
+			// reply_markup: isPaginationMenuNeeded ? debtPaginationMenu : undefined
 		});
 		ctx.session.debt.latestPayedDate = undefined;
 	}
