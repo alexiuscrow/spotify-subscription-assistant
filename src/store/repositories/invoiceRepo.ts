@@ -6,6 +6,8 @@ import { count, desc, gt } from 'drizzle-orm';
 import { SearchCriteria, SearchPageDirection } from '@/@types/db';
 import { DateTime } from 'luxon';
 import * as subscriberHistoryRepo from '@/store/repositories/subscriberHistoryRepo';
+import logger from '@/logger';
+import { inspect } from 'node:util';
 
 export const createInvoice = async (statementItem: StatementItem, subscriptionId: number) => {
 	const amountConvertor = -100;
@@ -43,8 +45,13 @@ export const getInvoices = async (criteria?: SearchCriteria) => {
 		const query = trx.select().from(invoiceSchema).where(selection);
 		const items = await withPagination(query.$dynamic(), limit, page, orderByColumns);
 		const firstIndex = 0;
-		const totalSelect = trx.select({ total: count() }).from(invoiceSchema);
-		const total = (await (selection ? totalSelect : totalSelect.where(selection)))[firstIndex].total;
+		let total = 0;
+		try {
+			total = (await trx.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
+		} catch (e) {
+			await logger.error(e);
+			throw e;
+		}
 
 		const totalPages = Math.ceil(total / limit);
 
@@ -131,7 +138,14 @@ export const getDebts = async (criteria: GetDebtsCriteria) => {
 			day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
 		});
 		const historyPoint = subscriberHistory.filter(h => DateTime.fromJSDate(h.date) <= invoiceDate)[firstItemIndex];
-		const amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
+		console.log(inspect(subscriberHistory, { depth: null }), inspect(historyPoint, { depth: null }));
+		let amountPerSubscriber: number;
+		try {
+			amountPerSubscriber = Number(invoice.amount) / Number(historyPoint.total);
+		} catch (e) {
+			logger.error(e);
+			throw e;
+		}
 		const amount = Math.ceil(amountPerSubscriber);
 		return {
 			date: invoiceDate,
