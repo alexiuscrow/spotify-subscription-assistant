@@ -62,6 +62,9 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 		);
 		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
 		range.row();
+	} else {
+		range.url('💳 Реквізити для оплати', '/details_for_payments');
+		range.row();
 	}
 
 	range.url(
