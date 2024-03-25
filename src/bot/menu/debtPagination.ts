@@ -68,7 +68,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	range.row();
 	range.url(
-		'📄 Платежі у Google таблиці',
+		'👀 Платежі у Google таблиці',
 		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
 	);
 });
