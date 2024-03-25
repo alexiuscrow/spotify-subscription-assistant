@@ -8,7 +8,7 @@ class InvoiceManager {
 	}
 
 	// todo: add cache
-	static async getInvoices(criteria) {
+	static async getInvoices(criteria?: SearchCriteria) {
 		return InvoiceRepo.getInvoices(criteria);
 	}
 
