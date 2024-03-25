@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { MonobankEvent, StatementItem, StatementItemWithAccount } from '@/@types/monobank';
-import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
-import * as invoiceRepo from '@/store/repositories/invoiceRepo';
+import SubscriptionManager from '@/manager/SubscriptionManager';
+import InvoiceManager from '@/manager/InvoiceManager';
 
 export async function POST(request: NextRequest) {
 	const json = await request.json();
@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
 		const expectedDescription = process.env.SUBSCRIPTION_INVOICE_STATEMENT_DESCRIPTION;
 
 		if (invoiceStatement.description === expectedDescription) {
-			const subscription = await subscriptionRepo.getSubscription();
+			const subscription = await SubscriptionManager.getSubscription();
 			if (subscription) {
-				const { amount } = await invoiceRepo.createInvoice(invoiceStatement, subscription.id);
+				const { amount } = await InvoiceManager.createInvoice(invoiceStatement, subscription.id);
 
 				console.log('New invoice created. Amount:', amount);
 			} else {

@@ -1,8 +1,8 @@
 import { Middleware } from 'grammy';
-import * as userRepo from '@/store/repositories/userRepo';
-import * as subscriberRepo from '@/store/repositories/subscriberRepo';
-import * as subscriptionRepo from '@/store/repositories/subscriptionRepo';
 import BotContext, { Subscriber, UserSession } from '@/bot/BotContext';
+import UserManager from '@/manager/UserManager';
+import SubscriptionManager from '@/manager/SubscriptionManager';
+import SubscriberManager from '@/manager/SubscriberManager';
 
 const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (ctx.session.user) {
@@ -14,17 +14,17 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	}
 
 	const currentTelegramUser = ctx.from;
-	const storedUser = await userRepo.getUserByTelegramId(currentTelegramUser.id);
+	const storedUser = await UserManager.getUserByTelegramId(currentTelegramUser.id);
 
 	if (!storedUser) {
-		const allowedUserCriteriaId = await userRepo.getAllowedUserCriteriaId(currentTelegramUser);
+		const allowedUserCriteriaId = await UserManager.getAllowedUserCriteriaId(currentTelegramUser);
 		if (allowedUserCriteriaId === null) {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
 			try {
-				const subscription = await subscriptionRepo.getSubscription();
-				const { user, subscriber } = await userRepo.createUserAndSubscriberIfNeeded(
+				const subscription = await SubscriptionManager.getSubscription();
+				const { user, subscriber } = await UserManager.createUserAndSubscriberIfNeeded(
 					currentTelegramUser,
 					subscription.id,
 					allowedUserCriteriaId
@@ -41,7 +41,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 		}
 	} else {
 		if (storedUser.status === 'canceled') {
-			await userRepo.updateUser(storedUser.id, { status: 'active' });
+			await UserManager.updateUser(storedUser.id, { status: 'active' });
 			await ctx.reply('Ви відновили свій статус. З поверненням!');
 		}
 
@@ -49,7 +49,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 		ctx.session.user = storedUser as UserSession;
 
 		if (storedUser.role !== 'admin') {
-			const subscriber = await subscriberRepo.getSubscriberByUserId(storedUser.id);
+			const subscriber = await SubscriberManager.getSubscriberByUserId(storedUser.id);
 			if (!subscriber) {
 				await ctx.reply('Щось пішло не так. Звернись до адміна.');
 				return;

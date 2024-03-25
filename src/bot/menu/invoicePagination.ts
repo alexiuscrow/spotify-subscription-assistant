@@ -1,12 +1,12 @@
 import { Menu } from '@grammyjs/menu';
 import BotContext from '@/bot/BotContext';
-import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import invoicesCommand from '@/bot/command/invoices';
 import { SearchPageDirection } from '@/@types/db';
+import InvoiceManager from '@/manager/InvoiceManager';
 
 const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(async (ctx, range) => {
 	const pagination = ctx.session.invoice.pagination;
-	const { hasNext, hasPrev } = await invoiceRepo.getAllowedInvoicePaginationOptions({
+	const { hasNext, hasPrev } = await InvoiceManager.getAllowedInvoicePaginationOptions({
 		limit: pagination.limit,
 		page: pagination.page,
 		pageDirection: pagination.pageDirection

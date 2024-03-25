@@ -1,11 +1,11 @@
 import { MiddlewareFn } from 'grammy';
 import BotContext from '@/bot/BotContext';
-import { getLatestPayedDate } from '@/spreadsheet';
 import { markdownv2 } from 'telegram-format';
-import * as invoiceRepo from '@/store/repositories/invoiceRepo';
 import debtPaginationMenu from '@/bot/menu/debtPagination';
 import logger from '@/logger';
 import generatePageLines from '@/bot/utils/page';
+import DebtManager from '@/manager/DebtManager';
+import SpreadsheetManager from '@/manager/SpreadsheetManager';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -25,7 +25,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	const latestPayedDate =
 		ctx.session.debt.latestPayedDate !== undefined
 			? ctx.session.debt.latestPayedDate
-			: await getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
+			: await SpreadsheetManager.getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
 	if (latestPayedDate) {
 		outputLines.push(
@@ -36,7 +36,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	}
 
 	const sessionPagination = ctx.session.debt.pagination;
-	const { items: debts, pagination } = await invoiceRepo.getDebts({
+	const { items: debts, pagination } = await DebtManager.getDebts({
 		limit: sessionPagination.limit,
 		page: sessionPagination.page,
 		orderByColumns: sessionPagination.orderByColumns,
@@ -45,7 +45,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	});
 
 	const isPaginationMenuWillBeShowed = pagination.hasPrev || pagination.hasNext;
-	const debtSum = ctx.session.debt.sum || (await invoiceRepo.getDebtsSum({ latestPayedDate }));
+	const debtSum = ctx.session.debt.sum || (await DebtManager.getDebtsSum({ latestPayedDate }));
 
 	outputLines.push('');
 	outputLines.push(
