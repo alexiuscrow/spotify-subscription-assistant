@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import InvoiceManager from '@/manager/InvoiceManager';
 import DebtManager from '@/manager/DebtManager';
 import SpreadsheetManager from '@/manager/SpreadsheetManager';
+import detailsForPaymentsCommand from '@/bot/command/details-for-payments';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
@@ -62,7 +63,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 		);
 		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
 	} else {
-		range.switchInlineCurrent('💳 Реквізити для оплати', '/details_for_payments');
+		range.text('💳 Реквізити для оплати', detailsForPaymentsCommand);
 	}
 
 	range.row();
