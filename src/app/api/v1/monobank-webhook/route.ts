@@ -97,13 +97,13 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 
 			if (debtSum) {
 				subscriberMessageLines.push('');
-				subscriberMessageLines.push(markdownv2.escape(`До сплати залишилось: ${debtSum} грн.`));
+				subscriberMessageLines.push(markdownv2.escape(`До повної сплати залишилось: ${debtSum} грн.`));
 				subscriberMessageLines.push(
 					`Використовуй ${markdownv2.url(markdownv2.escape('/my_status'), '/my_status')} щоб дізнатись більше\\.`
 				);
 
 				adminMessageLines.push('');
-				adminMessageLines.push(markdownv2.escape(`До сплати залишилось: ${debtSum} грн.`));
+				adminMessageLines.push(markdownv2.escape(`До повної сплати залишилось: ${debtSum} грн.`));
 			}
 
 			await bot.api.sendMessage(user.telegramId, subscriberMessageLines.join('\n'), {
