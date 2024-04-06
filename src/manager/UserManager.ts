@@ -14,6 +14,10 @@ class UserManager {
 		return AllowedUserCriteriaRepo.getAllowedUserCriteriaId(telegramUser);
 	}
 
+	static async getActiveAdminUsers() {
+		return UserRepo.getActiveAdminUsers();
+	}
+
 	static async createUserAndSubscriberIfNeeded(
 		telegramUser: TelegramUser,
 		subscriptionId: number,

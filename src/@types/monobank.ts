@@ -23,3 +23,9 @@ export interface StatementItemWithAccount {
 	account: string;
 	statementItem: StatementItem;
 }
+
+export interface SubscriberPaymentComment {
+	hashTag: '#spotify_subscription';
+	subscriberId: number;
+	firstName: string;
+}

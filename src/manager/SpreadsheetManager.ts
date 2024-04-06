@@ -7,6 +7,7 @@ import {
 	SpreadsheetPaymentsByYear
 } from '@/@types/spreadsheets';
 import { DateTime } from 'luxon';
+import Schema$ValueRange = sheets_v4.Schema$ValueRange;
 
 const auth = new google.auth.GoogleAuth({
 	scopes: JSON.parse(process.env.GOOGLE_AUTH_SCOPES as string),
@@ -119,7 +120,7 @@ class SpreadsheetManager {
 			for (const month in subscriber) {
 				const paymentStatus = subscriber[month];
 				if (paymentStatus === true) {
-					const currentDate = DateTime.fromObject(
+					const pointerDate = DateTime.fromObject(
 						{
 							year: parseInt(year),
 							month: parseInt(month) + 1,
@@ -127,12 +128,71 @@ class SpreadsheetManager {
 						},
 						{ locale: process.env.DATETIME_LOCALE as string }
 					);
-					if (!latestPayedDate || currentDate > latestPayedDate) {
-						latestPayedDate = currentDate;
+					if (!latestPayedDate || pointerDate > latestPayedDate) {
+						latestPayedDate = pointerDate;
 					}
 				}
 			}
 		}
+
+		return latestPayedDate;
+	}
+
+	static async writePayments(subscriberSpreadsheetPosition: number, numberOfPayments: number) {
+		const sheetTitles = await SpreadsheetManager.getSheetTitles();
+		const existedPayments = await SpreadsheetManager.getPaymentsFromSheetsBySubscriber(
+			sheetTitles,
+			subscriberSpreadsheetPosition
+		);
+		const rowOffset = 3;
+		const ranges: string[] = [];
+		const now = DateTime.now();
+		let latestPayedDate: DateTime | null = null;
+
+		for (const year in existedPayments) {
+			if (ranges.length >= numberOfPayments) break;
+
+			const subscriber = existedPayments[year];
+			for (const month in subscriber) {
+				if (ranges.length >= numberOfPayments) break;
+				const pointerDate = DateTime.fromObject(
+					{
+						year: parseInt(year),
+						month: parseInt(month) + 1,
+						day: Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string)
+					},
+					{ locale: process.env.DATETIME_LOCALE as string }
+				);
+				if (
+					pointerDate.startOf('month') < now.startOf('month') ||
+					(pointerDate.startOf('month') === now.startOf('month') &&
+						pointerDate.day >= Number(process.env.DEFAULT_CHARGE_DAY_OF_MONTH as string))
+				) {
+					const paymentStatus = subscriber[month];
+					if (paymentStatus === false) {
+						ranges.push(
+							`${year}!${String.fromCharCode(66 + parseInt(month))}${subscriberSpreadsheetPosition + rowOffset}`
+						);
+						latestPayedDate = pointerDate;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+
+		const dataToUpdate: Schema$ValueRange[] = ranges.map(range => ({
+			range,
+			values: [[true]]
+		}));
+
+		await sheetService.spreadsheets.values.batchUpdate({
+			spreadsheetId: process.env.LOG_GOOGLE_SHEETSPREAD_ID,
+			requestBody: {
+				data: dataToUpdate,
+				valueInputOption: 'RAW'
+			}
+		});
 
 		return latestPayedDate;
 	}
