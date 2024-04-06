@@ -15,8 +15,6 @@
     "@grammyjs/menu": "1.2.1",
     "@next/env": "14.1.0",
     "@vercel/postgres": "0.7.2",
-    "csv-parse": "5.5.5",
-    "csv-stringify": "6.4.6",
     "drizzle-orm": "0.29.4",
     "env-cmd": "10.1.0",
     "googleapis": "134.0.0",

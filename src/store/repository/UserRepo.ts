@@ -1,5 +1,5 @@
 import { db } from '@/store/db';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { allowedUserSubscriptionProps, subscriber as subscriberSchema, user as userSchema, user } from '@/store/schema';
 import { User as TelegramUser } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
@@ -7,10 +7,6 @@ import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 class UserRepo {
 	static async getUserByTelegramId(id: number) {
 		return db.query.user.findFirst({ where: eq(user.telegramId, id) });
-	}
-
-	static async getActiveAdminUsers() {
-		return db.query.user.findMany({ where: and(eq(user.role, 'admin'), eq(user.status, 'active')) });
 	}
 
 	static async createUserAndSubscriberIfNeeded(

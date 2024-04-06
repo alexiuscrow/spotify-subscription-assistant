@@ -9,7 +9,6 @@ import InvoiceManager from '@/manager/InvoiceManager';
 import DebtManager from '@/manager/DebtManager';
 import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import detailsForPaymentsCommand from '@/bot/command/details-for-payments';
-import { generateStringComment } from '@/bot/utils/paymentComment';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
@@ -59,11 +58,9 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 	const debtSum = await DebtManager.getDebtsSum({ latestPayedDate });
 
 	if (debtSum >= 100) {
-		const {
-			subscriber: { id: subscriberId },
-			firstName
-		} = ctx.session.user;
-		const paymentComment = encodeURIComponent(generateStringComment({ subscriberId, firstName }));
+		const paymentComment = encodeURIComponent(
+			`#spotify_subscription; u:${ctx.session.user.id} (${ctx.session.user.firstName})`
+		);
 		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
 	} else {
 		range.text('💳 Реквізити для оплати', detailsForPaymentsCommand);

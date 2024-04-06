@@ -89,34 +89,6 @@ class DebtManager {
 
 		return debts.reduce((sum, debt) => sum + debt.amount, 0);
 	}
-
-	static async getPayedMonthNumber({
-		latestPayedDate,
-		paymentAmount
-	}: Pick<GetDebtsCriteria, 'latestPayedDate'> & { paymentAmount: number }) {
-		const debts = await DebtManager.getAllDebts({
-			latestPayedDate,
-			pageDirection: SearchPageDirection.STRAIGHT,
-			orderByColumns: [invoiceSchema.createdAt]
-		});
-
-		let tempPaymentAmount = paymentAmount;
-		let payedMonths = 0;
-
-		for (const debt of debts) {
-			if (tempPaymentAmount >= debt.amount) {
-				tempPaymentAmount -= debt.amount;
-				payedMonths++;
-			} else {
-				break;
-			}
-		}
-
-		return {
-			payedMonths,
-			overpayAmount: tempPaymentAmount
-		};
-	}
 }
 
 export default DebtManager;
