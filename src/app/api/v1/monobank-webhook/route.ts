@@ -45,6 +45,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 		const subscriberPaymentComment = parseStringComment(invoiceStatement.description);
 
 		if (!subscriberPaymentComment) {
+			logger.error('Failed to parse subscriber payment comment');
 			return;
 		}
 
@@ -53,7 +54,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 			invoiceStatement.amount
 		);
 
-		if (!payedMonths) {
+		if (payedMonths) {
 			const subscriber = await SubscriberManager.getSubscriberById(subscriberPaymentComment.subscriberId, {
 				with: { user: true }
 			});
@@ -116,6 +117,8 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 					parse_mode: 'MarkdownV2'
 				});
 			}
+		} else {
+			logger.info('No payed months found');
 		}
 	} catch (error) {
 		const errorMessage: string = error instanceof Error ? error.message : '';
