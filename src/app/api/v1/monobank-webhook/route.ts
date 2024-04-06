@@ -25,9 +25,9 @@ export async function POST(request: NextRequest) {
 			if (subscription) {
 				const { amount } = await InvoiceManager.createInvoice(invoiceStatement, subscription.id);
 
-				await logger.info(`New invoice created. Amount: ${amount}`);
+				logger.info(`New invoice created. Amount: ${amount}`);
 			} else {
-				await logger.error('Subscription not found');
+				logger.error('Subscription not found');
 			}
 		} else if ((invoiceStatement.description || '').includes(subscriptionPaymentHashTag)) {
 			let subscriberPaymentComment: SubscriberPaymentComment | null = null;
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 				subscriberPaymentComment = parseStringComment(invoiceStatement.description);
 			} catch (error) {
 				const errorMessage: string = error instanceof Error ? error.message : '';
-				await logger.error(`Failed to parse subscriber payment comment. ${errorMessage}`);
+				logger.error(`Failed to parse subscriber payment comment. ${errorMessage}`);
 			}
 
 			if (subscriberPaymentComment) {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 					overpayAmount = paymentMeta.overpayAmount;
 				} catch (error) {
 					const errorMessage: string = error instanceof Error ? error.message : '';
-					await logger.error(`Failed to get number of payed months. ${errorMessage}`);
+					logger.error(`Failed to get number of payed months. ${errorMessage}`);
 				}
 
 				if (payedMonthNumber) {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 								`⚠️ ${markdownv2.bold(markdownv2.escape(`Платіж з переплатою ${overpayAmount} грн.`))}`
 							);
 
-							await logger.info(
+							logger.info(
 								`Subscriber '${user.firstName}' (id ${subscriberPaymentComment.subscriberId}) overpayed for ${overpayAmount}`
 							);
 						}
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
 							});
 						}
 					} else {
-						await logger.error(`Subscriber with id ${subscriberPaymentComment.subscriberId} not found`);
+						logger.error(`Subscriber with id ${subscriberPaymentComment.subscriberId} not found`);
 					}
 				}
 			}

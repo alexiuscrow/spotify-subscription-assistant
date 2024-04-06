@@ -9,12 +9,12 @@ import SpreadsheetManager from '@/manager/SpreadsheetManager';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
-		await logger.debug(
+		logger.debug(
 			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, userRole: ${ctx.session.user?.role}`
 		);
 		return ctx.reply('Ця команда доступна тільки для звичайних користувачів.');
 	} else if (!ctx.session.user?.subscriber) {
-		await logger.debug(
+		logger.debug(
 			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, subscriber: ${ctx.session.user?.subscriber}`
 		);
 		return ctx.reply('Щось пішло не так. Звернись до адміна.');
