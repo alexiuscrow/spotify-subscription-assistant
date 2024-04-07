@@ -4,7 +4,7 @@ interface Page<T> {
 	title: string;
 	items: T[];
 	generatePaginationInfo?: () => string;
-	generateItemInfo: (item: T) => string;
+	generateItemInfo: (item: T, index?: number) => string;
 	showPaginationTips?: boolean;
 	dataAfterItemList?: string | string[];
 }
@@ -28,8 +28,9 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	output.push('');
 
-	for (const item of items) {
-		output.push(markdownv2.escape(generateItemInfo(item)));
+	for (let i = 0; i < items.length; i++) {
+		const item = items[i];
+		output.push(markdownv2.escape(generateItemInfo(item, i)));
 	}
 
 	if (dataAfterItemList) {

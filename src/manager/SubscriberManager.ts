@@ -1,6 +1,7 @@
 import SubscriberRepo, { GetSubscriberOptions } from '@/store/repository/SubscriberRepo';
 import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import DebtManager from '@/manager/DebtManager';
+import { SearchCriteria } from '@/@types/db';
 
 class SubscriberManager {
 	static async getSubscriberById(id: number, options?: GetSubscriberOptions) {
@@ -9,6 +10,16 @@ class SubscriberManager {
 
 	static async getSubscriberByUserId(id: number) {
 		return SubscriberRepo.getSubscriberByUserId(id);
+	}
+
+	static async getSubscribers(criteria?: SearchCriteria & GetSubscriberOptions) {
+		return SubscriberRepo.getSubscribers(criteria);
+	}
+
+	static async getAllSubscribers(
+		criteria?: Pick<SearchCriteria, 'orderByColumns' | 'pageDirection' | 'selection'> & GetSubscriberOptions
+	) {
+		return SubscriberRepo.getAllSubscribers(criteria);
 	}
 
 	static async getNumberOfPaidMonthsInfo(subscriberId: number, paymentAmount: number) {

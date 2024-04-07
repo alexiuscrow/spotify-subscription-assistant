@@ -12,12 +12,8 @@ class InvoiceManager {
 		return InvoiceRepo.getInvoices(criteria);
 	}
 
-	static async getAllInvoices({
-		selection,
-		orderByColumns,
-		pageDirection = SearchPageDirection.REVERSE
-	}: Pick<SearchCriteria, 'orderByColumns' | 'pageDirection' | 'selection'>) {
-		return InvoiceRepo.getAllInvoices({ selection, orderByColumns, pageDirection });
+	static async getAllInvoices(criteria: Pick<SearchCriteria, 'orderByColumns' | 'pageDirection' | 'selection'>) {
+		return InvoiceRepo.getAllInvoices(criteria);
 	}
 
 	static async getAllowedInvoicePaginationOptions({

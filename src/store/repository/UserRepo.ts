@@ -4,6 +4,8 @@ import { allowedUserSubscriptionProps, subscriber as subscriberSchema, user as u
 import { User as TelegramUser } from '@grammyjs/types';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
+export type User = typeof userSchema.$inferSelect;
+
 class UserRepo {
 	static async getUserByTelegramId(id: number) {
 		return db.query.user.findFirst({ where: eq(user.telegramId, id) });
@@ -20,7 +22,6 @@ class UserRepo {
 	) {
 		const isAdmin = telegramUser.id === Number(process.env.ADMIN_TELEGRAM_USER_ID);
 		type NewUser = typeof userSchema.$inferInsert;
-		type User = typeof userSchema.$inferSelect;
 		type Subscriber = typeof subscriberSchema.$inferSelect;
 
 		return db.transaction(async trx => {
