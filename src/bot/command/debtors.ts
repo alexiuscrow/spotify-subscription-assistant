@@ -6,6 +6,7 @@ import DebtManager from '@/manager/DebtManager';
 import { User } from '@/store/repository/UserRepo';
 import generatePageLines from '@/bot/utils/page';
 import { markdownv2 } from 'telegram-format';
+import googleSpreadsheetLinkMenu from '@/bot/menu/googleSpreadsheetLink';
 
 const debtorsCommand: Middleware<BotContext> = async ctx => {
 	const outputLines = [];
@@ -32,22 +33,29 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 		}
 	}
 
-	debtsInfo = debtsInfo.sort((a, b) => b.sum - a.sum);
+	debtsInfo = debtsInfo.filter(debtInfo => debtInfo.sum).sort((a, b) => b.sum - a.sum);
+	let menu: typeof googleSpreadsheetLinkMenu | undefined;
 
-	outputLines.push(
-		...generatePageLines({
-			title: 'Дебітори',
-			items: debtsInfo,
-			generateItemInfo: ({ user, sum, monthNumber }, index) => {
-				const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
-				const userLink = markdownv2.url(markdownv2.escape(fullName), `tg://user?id=${user.id}`);
-				return `${index + 1}\\. ${userLink} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
-			}
-		})
-	);
+	if (debtsInfo.length) {
+		outputLines.push(
+			...generatePageLines({
+				title: 'Дебітори',
+				items: debtsInfo,
+				generateItemInfo: ({ user, sum, monthNumber }, index) => {
+					const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
+					const userLink = markdownv2.url(markdownv2.escape(fullName), `tg://user?id=${user.telegramId}`);
+					return `${index + 1}\\. ${userLink} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
+				}
+			})
+		);
+	} else {
+		outputLines.push(markdownv2.escape(`У всіх зареєстрованих підписників (${subscribers.length}) немає боргів.`));
+		menu = googleSpreadsheetLinkMenu;
+	}
 
 	await ctx.reply(outputLines.join('\n'), {
-		parse_mode: 'MarkdownV2'
+		parse_mode: 'MarkdownV2',
+		reply_markup: menu
 	});
 };
 
