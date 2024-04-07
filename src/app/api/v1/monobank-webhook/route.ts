@@ -49,12 +49,12 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 			return;
 		}
 
-		const { payedMonths, overpayAmount } = await SubscriberManager.getNumberOfPayedMonthsInfo(
+		const { paidMonths, overpayAmount } = await SubscriberManager.getNumberOfPaidMonthsInfo(
 			subscriberPaymentComment.subscriberId,
 			invoiceStatement.amount
 		);
 
-		if (payedMonths) {
+		if (paidMonths) {
 			const subscriber = await SubscriberManager.getSubscriberById(subscriberPaymentComment.subscriberId, {
 				with: { user: true }
 			});
@@ -68,14 +68,14 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 
 			const latestWrotePaymentDate = await SpreadsheetManager.writePayments(
 				subscriber.spreadsheetSubscriberIndex,
-				payedMonths
+				paidMonths
 			);
 
 			const subscriberMessageLines = [
-				markdownv2.escape(`Дані про оплату за ${payedMonths} місяці(в) успішно збережені.`)
+				markdownv2.escape(`Дані про оплату за ${paidMonths} місяці(в) успішно збережені.`)
 			];
 			const adminMessageLines = [
-				`Користувач ${markdownv2.bold(`${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}`)} ${markdownv2.escape(`(id ${user.id}) оплатив ${payedMonths} місяці(в).`)}`
+				`Користувач ${markdownv2.bold(`${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}`)} ${markdownv2.escape(`(id ${user.id}) оплатив ${paidMonths} місяці(в).`)}`
 			];
 
 			if (overpayAmount) {
@@ -87,12 +87,12 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 				adminMessageLines.push(`⚠️ ${markdownv2.bold(markdownv2.escape(`Платіж з переплатою ${overpayAmount} грн.`))}`);
 
 				logger.info(
-					`Subscriber '${user.firstName}' (id ${subscriberPaymentComment.subscriberId}) overpayed for ${overpayAmount}`
+					`Subscriber '${user.firstName}' (id ${subscriberPaymentComment.subscriberId}) overpaid for ${overpayAmount}`
 				);
 			}
 
 			const debtSum = await DebtManager.getDebtsSum({
-				latestPayedDate: latestWrotePaymentDate
+				latestPaidDate: latestWrotePaymentDate
 			});
 
 			if (debtSum) {
@@ -120,7 +120,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 				});
 			}
 		} else {
-			logger.info('No payed months found');
+			logger.info('No paid months found');
 		}
 	} catch (error) {
 		const errorMessage: string = error instanceof Error ? error.message : '';

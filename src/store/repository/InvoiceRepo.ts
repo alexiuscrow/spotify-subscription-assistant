@@ -2,19 +2,8 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
 import { StatementItem } from '@/@types/monobank';
 import { withPagination } from '@/store/utils';
-import { count, desc, gt } from 'drizzle-orm';
+import { count, desc } from 'drizzle-orm';
 import { SearchCriteria, SearchPageDirection } from '@/@types/db';
-import { DateTime } from 'luxon';
-import SubscriberHistoryRepo from '@/store/repository/SubscriberHistoryRepo';
-
-interface GetDebtsCriteria extends Omit<SearchCriteria, 'selection'> {
-	latestPayedDate: DateTime | null | void;
-}
-
-export interface Debt {
-	date: DateTime;
-	amount: number;
-}
 
 class InvoiceRepo {
 	static async createInvoice(statementItem: StatementItem, subscriptionId: number) {

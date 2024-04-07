@@ -11,16 +11,16 @@ class SubscriberManager {
 		return SubscriberRepo.getSubscriberByUserId(id);
 	}
 
-	static async getNumberOfPayedMonthsInfo(subscriberId: number, paymentAmount: number) {
+	static async getNumberOfPaidMonthsInfo(subscriberId: number, paymentAmount: number) {
 		const subscriber = await SubscriberManager.getSubscriberById(subscriberId);
 
 		if (!subscriber) {
 			throw new Error(`Subscriber with id ${subscriberId} not found`);
 		}
 
-		const latestPayedDate = await SpreadsheetManager.getLatestPayedDate(subscriber.spreadsheetSubscriberIndex);
+		const latestPaidDate = await SpreadsheetManager.getLatestPaidDate(subscriber.spreadsheetSubscriberIndex);
 
-		return await DebtManager.getPayedMonthNumber({ latestPayedDate, paymentAmount });
+		return await DebtManager.getPaidMonthNumber({ latestPaidDate, paymentAmount });
 	}
 }
 

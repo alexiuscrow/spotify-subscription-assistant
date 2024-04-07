@@ -16,7 +16,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 		return;
 	}
 
-	const latestPayedDate = await SpreadsheetManager.getLatestPayedDate(
+	const latestPaidDate = await SpreadsheetManager.getLatestPaidDate(
 		ctx.session.user.subscriber.spreadsheetSubscriberIndex
 	);
 
@@ -25,10 +25,10 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 		limit: pagination.limit,
 		page: pagination.page,
 		pageDirection: pagination.pageDirection,
-		selection: latestPayedDate
+		selection: latestPaidDate
 			? gt(
 					invoiceSchema.createdAt,
-					DateTime.fromISO(<string>latestPayedDate.toISODate())
+					DateTime.fromISO(<string>latestPaidDate.toISODate())
 						.plus({ month: 1 })
 						.toJSDate()
 				)
@@ -56,7 +56,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	range.row();
 
-	const debtSum = await DebtManager.getDebtsSum({ latestPayedDate });
+	const debtSum = await DebtManager.getDebtsSum({ latestPaidDate });
 
 	if (debtSum >= 100) {
 		const {

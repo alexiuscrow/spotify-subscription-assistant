@@ -11,7 +11,7 @@ export interface Debt {
 }
 
 interface GetDebtsCriteria extends Omit<SearchCriteria, 'selection'> {
-	latestPayedDate: DateTime | null | void;
+	latestPaidDate: DateTime | null | void;
 }
 
 class DebtManager {
@@ -21,10 +21,10 @@ class DebtManager {
 			page: criteria.page,
 			orderByColumns: criteria.orderByColumns,
 			pageDirection: criteria.pageDirection,
-			selection: criteria.latestPayedDate
+			selection: criteria.latestPaidDate
 				? gt(
 						invoiceSchema.createdAt,
-						DateTime.fromISO(<string>criteria.latestPayedDate.toISODate())
+						DateTime.fromISO(<string>criteria.latestPaidDate.toISODate())
 							.plus({ month: 1 })
 							.toJSDate()
 					)
@@ -59,7 +59,7 @@ class DebtManager {
 	static async getAllDebts({
 		orderByColumns,
 		pageDirection = SearchPageDirection.REVERSE,
-		latestPayedDate
+		latestPaidDate
 	}: Omit<GetDebtsCriteria, 'limit' | 'page'>) {
 		const limit = 1_000;
 		let hasMore = true;
@@ -72,7 +72,7 @@ class DebtManager {
 				page,
 				orderByColumns,
 				pageDirection,
-				latestPayedDate
+				latestPaidDate
 			});
 			debts.push(...items);
 			hasMore = pageDirection === SearchPageDirection.STRAIGHT ? pagination.hasNext : pagination.hasPrev;
@@ -82,38 +82,38 @@ class DebtManager {
 		return debts;
 	}
 
-	static async getDebtsSum({ latestPayedDate }: Pick<GetDebtsCriteria, 'latestPayedDate'>) {
+	static async getDebtsSum({ latestPaidDate }: Pick<GetDebtsCriteria, 'latestPaidDate'>) {
 		const debts = await DebtManager.getAllDebts({
-			latestPayedDate
+			latestPaidDate
 		});
 
 		return debts.reduce((sum, debt) => sum + debt.amount, 0);
 	}
 
-	static async getPayedMonthNumber({
-		latestPayedDate,
+	static async getPaidMonthNumber({
+		latestPaidDate,
 		paymentAmount
-	}: Pick<GetDebtsCriteria, 'latestPayedDate'> & { paymentAmount: number }) {
+	}: Pick<GetDebtsCriteria, 'latestPaidDate'> & { paymentAmount: number }) {
 		const debts = await DebtManager.getAllDebts({
-			latestPayedDate,
+			latestPaidDate,
 			pageDirection: SearchPageDirection.STRAIGHT,
 			orderByColumns: [invoiceSchema.createdAt]
 		});
 
 		let tempPaymentAmount = paymentAmount;
-		let payedMonths = 0;
+		let paidMonths = 0;
 
 		for (const debt of debts) {
 			if (tempPaymentAmount >= debt.amount) {
 				tempPaymentAmount -= debt.amount;
-				payedMonths++;
+				paidMonths++;
 			} else {
 				break;
 			}
 		}
 
 		return {
-			payedMonths,
+			paidMonths,
 			overpayAmount: tempPaymentAmount
 		};
 	}

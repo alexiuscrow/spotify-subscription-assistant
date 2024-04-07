@@ -22,59 +22,64 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	const outputLines = [];
 
-	const latestPayedDate =
-		ctx.session.debt.latestPayedDate !== undefined
-			? ctx.session.debt.latestPayedDate
-			: await SpreadsheetManager.getLatestPayedDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
+	const latestPaidDate =
+		ctx.session.debt.latestPaidDate !== undefined
+			? ctx.session.debt.latestPaidDate
+			: await SpreadsheetManager.getLatestPaidDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
-	if (latestPayedDate) {
+	if (latestPaidDate) {
 		outputLines.push(
-			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPayedDate.toFormat('dd MMMM, yyyy'))}`
+			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPaidDate.toFormat('dd MMMM, yyyy'))}`
 		);
 	} else {
 		outputLines.push('Платежі не знайдені');
 	}
 
-	const sessionPagination = ctx.session.debt.pagination;
-	const { items: debts, pagination } = await DebtManager.getDebts({
-		limit: sessionPagination.limit,
-		page: sessionPagination.page,
-		orderByColumns: sessionPagination.orderByColumns,
-		pageDirection: sessionPagination.pageDirection,
-		latestPayedDate
-	});
-
-	const isPaginationMenuWillBeShowed = pagination.hasPrev || pagination.hasNext;
-	const debtSum = ctx.session.debt.sum || (await DebtManager.getDebtsSum({ latestPayedDate }));
+	const debtSum = ctx.session.debt.sum || (await DebtManager.getDebtsSum({ latestPaidDate }));
 
 	outputLines.push('');
-	outputLines.push(
-		...generatePageLines({
-			title: 'Несплачені рахунки',
-			generatePaginationInfo: () =>
-				`Сторінка ${pagination.page} з ${pagination.totalPages}. Нарахування ${(debts as Array<object>).length} з ${pagination.total}.`,
-			items: debts,
-			generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
-				const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
-				const formattedEndDate = endDate.toFormat('dd/LL/yy');
-				const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
-				return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
-			},
-			dataAfterItemList: [
-				`Сума несплачених нарахувань: ${debtSum} грн`,
-				'',
-				markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
-			],
-			showPaginationTips: isPaginationMenuWillBeShowed
-		})
-	);
+	if (debtSum) {
+		const sessionPagination = ctx.session.debt.pagination;
+		const { items: debts, pagination } = await DebtManager.getDebts({
+			limit: sessionPagination.limit,
+			page: sessionPagination.page,
+			orderByColumns: sessionPagination.orderByColumns,
+			pageDirection: sessionPagination.pageDirection,
+			latestPaidDate
+		});
+
+		const isPaginationMenuWillBeShowed = pagination.hasPrev || pagination.hasNext;
+
+		outputLines.push(
+			...generatePageLines({
+				title: 'Несплачені рахунки',
+				generatePaginationInfo: () =>
+					`Сторінка ${pagination.page} з ${pagination.totalPages}. Нарахування ${(debts as Array<object>).length} з ${pagination.total}.`,
+				items: debts,
+				generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
+					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
+					const formattedEndDate = endDate.toFormat('dd/LL/yy');
+					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
+					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
+				},
+				dataAfterItemList: [
+					`Сума несплачених нарахувань: ${debtSum} грн`,
+					'',
+					markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
+				],
+				showPaginationTips: isPaginationMenuWillBeShowed
+			})
+		);
+	} else {
+		outputLines.push('Всі нарахування сплачені.');
+	}
 
 	const responseMsg = outputLines.join('\n');
 	await ctx.reply(responseMsg, {
 		parse_mode: 'MarkdownV2',
 		reply_markup: debtPaginationMenu
 	});
-	ctx.session.debt.latestPayedDate = undefined;
+	ctx.session.debt.latestPaidDate = undefined;
 	ctx.session.debt.sum = undefined;
 };
 

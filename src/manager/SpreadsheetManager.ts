@@ -110,8 +110,8 @@ class SpreadsheetManager {
 		return SpreadsheetManager.getPaymentsFromSheetsBySubscriber(sheetTitles, subscriberSpreadsheetPosition);
 	}
 
-	static async getLatestPayedDate(subscriberSpreadsheetPosition: number) {
-		let latestPayedDate: DateTime | null = null;
+	static async getLatestPaidDate(subscriberSpreadsheetPosition: number) {
+		let latestPaidDate: DateTime | null = null;
 
 		const payments = await SpreadsheetManager.getPaymentsForAllYearsBySubscriber(subscriberSpreadsheetPosition);
 
@@ -128,14 +128,14 @@ class SpreadsheetManager {
 						},
 						{ locale: process.env.DATETIME_LOCALE as string }
 					);
-					if (!latestPayedDate || pointerDate > latestPayedDate) {
-						latestPayedDate = pointerDate;
+					if (!latestPaidDate || pointerDate > latestPaidDate) {
+						latestPaidDate = pointerDate;
 					}
 				}
 			}
 		}
 
-		return latestPayedDate;
+		return latestPaidDate;
 	}
 
 	static async writePayments(subscriberSpreadsheetPosition: number, numberOfPayments: number) {
@@ -147,7 +147,7 @@ class SpreadsheetManager {
 		const rowOffset = 3;
 		const ranges: string[] = [];
 		const now = DateTime.now();
-		let latestPayedDate: DateTime | null = null;
+		let latestPaidDate: DateTime | null = null;
 
 		for (const year in existedPayments) {
 			if (ranges.length >= numberOfPayments) break;
@@ -173,7 +173,7 @@ class SpreadsheetManager {
 						ranges.push(
 							`${year}!${String.fromCharCode(66 + parseInt(month))}${subscriberSpreadsheetPosition + rowOffset}`
 						);
-						latestPayedDate = pointerDate;
+						latestPaidDate = pointerDate;
 					}
 				} else {
 					break;
@@ -194,7 +194,7 @@ class SpreadsheetManager {
 			}
 		});
 
-		return latestPayedDate;
+		return latestPaidDate;
 	}
 }
 
