@@ -58,15 +58,17 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 
 	const debtSum = await DebtManager.getDebtsSum({ latestPaidDate });
 
-	if (debtSum >= 100) {
-		const {
-			subscriber: { id: subscriberId },
-			firstName
-		} = ctx.session.user;
-		const paymentComment = encodeURIComponent(generateStringComment({ subscriberId, firstName }));
-		range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
-	} else {
-		range.text('💳 Реквізити для оплати', detailsForPaymentsCommand);
+	if (debtSum) {
+		if (debtSum >= 100) {
+			const {
+				subscriber: { id: subscriberId },
+				firstName
+			} = ctx.session.user;
+			const paymentComment = encodeURIComponent(generateStringComment({ subscriberId, firstName }));
+			range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
+		} else {
+			range.text('💳 Реквізити для оплати', detailsForPaymentsCommand);
+		}
 	}
 
 	range.row();
