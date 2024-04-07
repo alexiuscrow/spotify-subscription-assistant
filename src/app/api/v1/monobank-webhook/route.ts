@@ -10,7 +10,6 @@ import { getBot } from '@/bot';
 import { markdownv2 } from 'telegram-format';
 import UserManager from '@/manager/UserManager';
 import DebtManager from '@/manager/DebtManager';
-import debtPaginationMenu from '@/bot/menu/debtPagination';
 
 export const POST = async (request: NextRequest) => {
 	const json = await request.json();
@@ -110,8 +109,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 			const bot = await getBot();
 
 			await bot.api.sendMessage(user.telegramId, subscriberMessageLines.join('\n'), {
-				parse_mode: 'MarkdownV2',
-				reply_markup: debtPaginationMenu
+				parse_mode: 'MarkdownV2'
 			});
 
 			const adminUsers = await UserManager.getActiveAdminUsers();
