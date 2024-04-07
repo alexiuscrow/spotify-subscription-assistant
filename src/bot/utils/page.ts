@@ -4,7 +4,7 @@ interface Page<T> {
 	title: string;
 	items: T[];
 	generatePaginationInfo?: () => string;
-	generateItemInfo: (item: T, index?: number) => string;
+	generateItemInfo: (item: T, index: number) => string;
 	showPaginationTips?: boolean;
 	dataAfterItemList?: string | string[];
 }
