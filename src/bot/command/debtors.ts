@@ -43,9 +43,9 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 				items: debtsInfo,
 				generateItemInfo: ({ user, sum, monthNumber }, index) => {
 					const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
-					const userLink = markdownv2.url(markdownv2.escape(fullName), `tg://user?id=${user.telegramId}`);
-					console.log(userLink);
-					return `${index + 1}\\. ${userLink} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
+					const userMention = markdownv2.userMention(markdownv2.escape(fullName), user.telegramId);
+					console.log(userMention);
+					return `${index + 1}\\. ${userMention} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
 				}
 			})
 		);
