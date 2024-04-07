@@ -43,7 +43,7 @@ bot.use(authenticatorMiddleware);
 bot.use(menuComposer);
 bot.use(commands);
 
-await bot.api.setMyDescription(
+bot.api.setMyDescription(
 	[
 		'Відображати інформацію щодо стану платежів за підписку для кожного учасника сімейної підписки',
 		'Визначати суму, необхідну до сплати',
