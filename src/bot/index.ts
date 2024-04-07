@@ -35,6 +35,7 @@ function initial(): SessionData {
 		}
 	};
 }
+
 bot.use(session({ initial }));
 
 bot.use(loggerMiddleware);
@@ -42,13 +43,16 @@ bot.use(authenticatorMiddleware);
 bot.use(menuComposer);
 bot.use(commands);
 
-// TODO: add logger
-// bot.on('msg:text').filter(
-// 	async ctx => ctx.senderChat === undefined, // Regular messages sent by `ctx.from`
-// 	async ctx => {
-// 		console.log('Message ->', ctx.msg);
-// 		await ctx.reply(ctx.msg.text);
-// 	}
-// );
+await bot.api.setMyDescription(
+	[
+		'Відображати інформацію щодо стану платежів за підписку для кожного учасника сімейної підписки',
+		'Визначати суму, необхідну до сплати',
+		'Відображати всі списання сервісом Spotify плати за підписку та автоматично фіксувати їх',
+		'Надати актуальні реквізити для сплати',
+		'Автоматично фіксувати платеджі за підписку у разі оплати за посиланням Monobank'
+	]
+		.map(item => `‣ ${item}`)
+		.join('\n')
+);
 
 export default bot;
