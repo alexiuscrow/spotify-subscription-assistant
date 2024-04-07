@@ -6,7 +6,7 @@ import { parseStringComment, subscriptionPaymentHashTag } from '@/bot/utils/paym
 import logger from '@/logger';
 import SubscriberManager from '@/manager/SubscriberManager';
 import SpreadsheetManager from '@/manager/SpreadsheetManager';
-import bot from '@/bot';
+import { getBot } from '@/bot';
 import { markdownv2 } from 'telegram-format';
 import UserManager from '@/manager/UserManager';
 import DebtManager from '@/manager/DebtManager';
@@ -105,6 +105,8 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 				adminMessageLines.push('');
 				adminMessageLines.push(markdownv2.escape(`До повної сплати залишилось: ${debtSum} грн.`));
 			}
+
+			const bot = await getBot();
 
 			await bot.api.sendMessage(user.telegramId, subscriberMessageLines.join('\n'), {
 				parse_mode: 'MarkdownV2'
