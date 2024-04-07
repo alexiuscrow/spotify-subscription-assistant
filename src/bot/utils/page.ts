@@ -30,7 +30,7 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i];
-		output.push(markdownv2.escape(generateItemInfo(item, i)));
+		output.push(generateItemInfo(item, i));
 	}
 
 	if (dataAfterItemList) {

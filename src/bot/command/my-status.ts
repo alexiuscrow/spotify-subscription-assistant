@@ -60,7 +60,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
 					const formattedEndDate = endDate.toFormat('dd/LL/yy');
 					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
-					return `${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`;
+					return markdownv2.escape(`${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`);
 				},
 				dataAfterItemList: [
 					`Сума несплачених нарахувань: ${debtSum} грн`,
