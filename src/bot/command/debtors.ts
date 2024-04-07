@@ -34,7 +34,6 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 	}
 
 	debtsInfo = debtsInfo.filter(debtInfo => debtInfo.sum).sort((a, b) => b.sum - a.sum);
-	let menu: typeof googleSpreadsheetLinkMenu | undefined;
 
 	if (debtsInfo.length) {
 		outputLines.push(
@@ -50,12 +49,11 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 		);
 	} else {
 		outputLines.push(markdownv2.escape(`У всіх зареєстрованих підписників (${subscribers.length}) немає боргів.`));
-		menu = googleSpreadsheetLinkMenu;
 	}
 
 	await ctx.reply(outputLines.join('\n'), {
 		parse_mode: 'MarkdownV2',
-		reply_markup: menu
+		reply_markup: googleSpreadsheetLinkMenu
 	});
 };
 
