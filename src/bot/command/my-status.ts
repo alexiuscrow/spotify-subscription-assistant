@@ -71,7 +71,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			})
 		);
 	} else {
-		outputLines.push('Всі нарахування сплачені.');
+		outputLines.push('Всі нарахування сплачені\\.');
 	}
 
 	const responseMsg = outputLines.join('\n');
