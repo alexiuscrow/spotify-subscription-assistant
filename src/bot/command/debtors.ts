@@ -44,7 +44,6 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 				generateItemInfo: ({ user, sum, monthNumber }, index) => {
 					const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
 					const userMention = markdownv2.userMention(markdownv2.escape(fullName), user.telegramId);
-					console.log(userMention);
 					return `${index + 1}\\. ${userMention} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
 				}
 			})
