@@ -4,6 +4,7 @@ import invoicePaginationMenu from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 import generatePageLines from '@/bot/utils/page';
 import InvoiceManager from '@/manager/InvoiceManager';
+import { markdownv2 } from 'telegram-format';
 
 const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 	const sessionPagination = ctx.session.invoice.pagination;
@@ -25,7 +26,7 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 			const dateString = DateTime.fromJSDate(createdAt)
 				.setZone(process.env.LUXON_ZONE_NAME as string)
 				.toFormat('dd/LL/yy, HH:mm');
-			return `${dateString} — ${amount} грн`;
+			return markdownv2.escape(`${dateString} — ${amount} грн`);
 		},
 		showPaginationTips: isPaginationMenuNeeded
 	});
