@@ -35,10 +35,9 @@ class SubscriberRepo {
 		} = criteria || {};
 
 		return db.transaction(async trx => {
-			let query = trx.select().from(subscriber).where(selection);
-			if (criteria?.with?.user) {
-				query = query.leftJoin(user, eq(subscriber.userId, user.id));
-			}
+			const query = criteria?.with?.user
+				? trx.select().from(subscriber).where(selection).leftJoin(user, eq(subscriber.userId, user.id))
+				: trx.select().from(subscriber).where(selection);
 			const queryResult = await withPagination(query.$dynamic(), limit, page, orderByColumns);
 			const items = criteria?.with?.user
 				? (queryResult as { subscriber: Subscriber; user: User }[]).map(

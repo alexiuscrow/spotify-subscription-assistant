@@ -82,12 +82,13 @@ class DebtManager {
 		return debts;
 	}
 
-	static async getDebtsSum({ latestPaidDate, debts }: Pick<GetDebtsCriteria, 'latestPaidDate'> | { debts: Debt[] }) {
+	static async getDebtsSum(options: Pick<GetDebtsCriteria, 'latestPaidDate'> | { debts: Debt[] }) {
 		const debtsToProcess: Debt[] =
-			debts ||
-			(await DebtManager.getAllDebts({
-				latestPaidDate
-			}));
+			'debts' in options
+				? options.debts
+				: await DebtManager.getAllDebts({
+						latestPaidDate: options.latestPaidDate
+					});
 
 		return debtsToProcess.reduce((sum, debt) => sum + debt.amount, 0);
 	}
