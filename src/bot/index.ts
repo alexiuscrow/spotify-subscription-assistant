@@ -62,7 +62,7 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 			.join('\n')
 	);
 
-	await bot.api.setMyDescription(
+	await bot.api.setMyShortDescription(
 		'Бот, створений для управління сімейною підпискою Spotify. Він дозволяє переглядати статус платежів за ' +
 			'підписку кожного користувача, розраховувати суму, яку необхідно сплатити, а також автоматично фіксує списання за ' +
 			'підписку Spotify. '
