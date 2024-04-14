@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1709479352604,
-      "tag": "0000_silky_echo",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1709481050955,
-      "tag": "0001_luxuriant_maggott",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1709750447746,
-      "tag": "0002_chemical_harry_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1710701147954,
-      "tag": "0003_perfect_the_stranger",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1710702197774,
-      "tag": "0004_chief_sharon_carter",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1710966353900,
-      "tag": "0005_minor_cobalt_man",
+      "when": 1713115825709,
+      "tag": "0000_whole_domino",
       "breakpoints": true
     }
   ]

@@ -1,6 +1,7 @@
-import { bigint, pgEnum, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { bigint, pgEnum, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { subscriber } from '@/store/schema/subscriber';
 import { relations } from 'drizzle-orm';
+import { pgTable } from '@/store/utils';
 
 export const userRoleEnum = pgEnum('user_role', ['regular', 'admin']);
 export const userStatusEnum = pgEnum('user_status', ['active', 'canceled']);

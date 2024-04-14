@@ -1,6 +1,7 @@
-import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { integer, serial, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { subscription } from '@/store/schema/subscription';
+import { pgTable } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
 export const subscriberHistory = pgTable('subscriber_history', {

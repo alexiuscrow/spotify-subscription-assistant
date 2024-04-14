@@ -1,8 +1,9 @@
-import { integer, pgTable, serial, unique } from 'drizzle-orm/pg-core';
+import { integer, serial } from 'drizzle-orm/pg-core';
 import { user } from '@/store/schema/user';
 import { subscription } from '@/store/schema/subscription';
 import { relations } from 'drizzle-orm';
 import { payment } from '@/store/schema/payment';
+import { pgTable, unique } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
 export const subscriber = pgTable(
