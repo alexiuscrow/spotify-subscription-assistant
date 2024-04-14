@@ -2,7 +2,7 @@ import { PgColumn, PgSelect, pgTableCreator, unique as drizzleUnique } from 'dri
 import { SQL } from 'drizzle-orm';
 
 const projectPrefix = 'ssa';
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.VERCEL_ENV === 'production';
 const env = isProduction ? 'prod' : 'dev';
 
 export const pgTable = pgTableCreator(name => `${projectPrefix}_${env}_${name}`);
