@@ -81,7 +81,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 			if (overpayAmount) {
 				subscriberMessageLines.push('');
 				subscriberMessageLines.push(
-					`⚠️ ${markdownv2.bold(markdownv2.escape(`Ви переплатили ${overpayAmount} грн.`))} ${markdownv2.escape(`Такі кошти не можуть бути зараховані "на перед" і будуть проігноровані. Зверніться до адміністратора.`)}`
+					`⚠️ ${markdownv2.bold(markdownv2.escape(`Ви переплатили ${overpayAmount} грн.`))}${markdownv2.escape(` Такі кошти не можуть бути зараховані "на перед" і будуть проігноровані. Зверніться до адміністратора.`)}`
 				);
 				adminMessageLines.push('');
 				adminMessageLines.push(`⚠️ ${markdownv2.bold(markdownv2.escape(`Платіж з переплатою ${overpayAmount} грн.`))}`);
