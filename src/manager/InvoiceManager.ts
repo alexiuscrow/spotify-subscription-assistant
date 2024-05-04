@@ -7,7 +7,6 @@ class InvoiceManager {
 		return InvoiceRepo.createInvoice(statementItem, subscriptionId);
 	}
 
-	// todo: add cache
 	static async getInvoices(criteria?: SearchCriteria) {
 		return InvoiceRepo.getInvoices(criteria);
 	}

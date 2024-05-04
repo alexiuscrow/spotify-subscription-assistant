@@ -2,8 +2,29 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
 import { StatementItem } from '@/common-interfaces/monobank';
 import { withPagination } from '@/store/utils';
-import { count, desc } from 'drizzle-orm';
+import { count, desc, SQL } from 'drizzle-orm';
 import { SearchCriteria, SearchPageDirection } from '@/store/interfaces';
+import { PgColumn } from 'drizzle-orm/pg-core';
+
+export type Invoice = typeof invoiceSchema.$inferSelect;
+
+export interface GetInvoicesResponse {
+	items: Invoice[];
+	pagination: {
+		limit: number;
+		orderByColumns: Array<PgColumn | SQL | SQL.Aliased>;
+		total: number;
+		page: number;
+		totalPages: number;
+		hasNext: boolean;
+		hasPrev: boolean;
+	};
+}
+
+export interface GetAllowedInvoicePaginationOptionsResponse {
+	hasNext: boolean;
+	hasPrev: boolean;
+}
 
 class InvoiceRepo {
 	static async createInvoice(statementItem: StatementItem, subscriptionId: number) {
@@ -27,7 +48,7 @@ class InvoiceRepo {
 		return insertedInvoices[firstItemIndex];
 	}
 
-	static async getInvoices(criteria?: SearchCriteria) {
+	static async getInvoices(criteria?: SearchCriteria): Promise<GetInvoicesResponse> {
 		const {
 			limit = 5,
 			page = 1,
@@ -35,8 +56,6 @@ class InvoiceRepo {
 			pageDirection = SearchPageDirection.REVERSE,
 			selection
 		} = criteria || {};
-
-		type Invoice = typeof invoiceSchema.$inferSelect;
 
 		return db.transaction(async trx => {
 			const query = trx.select().from(invoiceSchema).where(selection);
@@ -78,7 +97,7 @@ class InvoiceRepo {
 		const limit = 1_000;
 		let hasMore = true;
 		let page = 1;
-		const invoices = [];
+		const invoices: Invoice[] = [];
 
 		while (hasMore) {
 			const { items, pagination } = await InvoiceRepo.getInvoices({
@@ -101,7 +120,7 @@ class InvoiceRepo {
 		page = 1,
 		pageDirection = SearchPageDirection.REVERSE,
 		selection
-	}: Omit<SearchCriteria, 'orderByColumns'>) {
+	}: Omit<SearchCriteria, 'orderByColumns'>): Promise<GetAllowedInvoicePaginationOptionsResponse> {
 		const firstIndex = 0;
 		const total = (await db.select({ total: count() }).from(invoiceSchema).where(selection))[firstIndex].total;
 

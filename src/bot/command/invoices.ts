@@ -3,12 +3,12 @@ import { DateTime } from 'luxon';
 import invoicePaginationMenu from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 import generatePageLines from '@/bot/utils/page';
-import InvoiceManager from '@/manager/InvoiceManager';
 import { markdownv2 } from 'telegram-format';
+import InvoiceManagerCached from '@/manager/cached/InvoiceManagerCached';
 
 const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 	const sessionPagination = ctx.session.invoice.pagination;
-	const { items, pagination } = await InvoiceManager.getInvoices({
+	const { items, pagination } = await InvoiceManagerCached.getInvoices({
 		limit: sessionPagination.limit,
 		page: sessionPagination.page,
 		orderByColumns: sessionPagination.orderByColumns,

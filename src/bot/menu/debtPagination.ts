@@ -5,11 +5,11 @@ import myStatusCommand from '@/bot/command/my-status';
 import { SearchPageDirection } from '@/store/interfaces';
 import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
-import InvoiceManager from '@/manager/InvoiceManager';
 import DebtManager from '@/manager/DebtManager';
 import detailsForPaymentsCommand from '@/bot/command/details-for-payments';
 import { generateStringComment } from '@/bot/utils/paymentComment';
 import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
+import InvoiceManagerCached from '@/manager/cached/InvoiceManagerCached';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
@@ -21,7 +21,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 	);
 
 	const pagination = ctx.session.debt.pagination;
-	const { hasNext, hasPrev } = await InvoiceManager.getAllowedInvoicePaginationOptions({
+	const { hasNext, hasPrev } = await InvoiceManagerCached.getAllowedInvoicePaginationOptions({
 		limit: pagination.limit,
 		page: pagination.page,
 		pageDirection: pagination.pageDirection,

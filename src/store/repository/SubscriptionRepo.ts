@@ -10,8 +10,10 @@ export interface GetSubscriptionOptions {
 	};
 }
 
+export type Subscription = typeof subscription.$inferSelect;
+
 class SubscriptionRepo {
-	static async getSubscription(options?: GetSubscriptionOptions) {
+	static async getSubscription(options?: GetSubscriptionOptions): Promise<Subscription> {
 		const result = await db.query.subscription.findFirst({
 			where: eq(subscription.name, process.env.SUBSCRIPTION_NAME as string),
 			with: {

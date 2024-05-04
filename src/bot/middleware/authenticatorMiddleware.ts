@@ -1,8 +1,8 @@
 import { Middleware } from 'grammy';
 import BotContext, { Subscriber, UserSession } from '@/bot/BotContext';
-import SubscriptionManager from '@/manager/SubscriptionManager';
 import SubscriberManager from '@/manager/SubscriberManager';
 import UserManagerCached from '@/manager/cached/UserManagerCached';
+import SubscriptionManagerCached from '@/manager/cached/SubscriptionManagerCached';
 
 const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (ctx.session.user) {
@@ -23,7 +23,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 			return;
 		} else {
 			try {
-				const subscription = await SubscriptionManager.getSubscription();
+				const subscription = await SubscriptionManagerCached.getSubscription();
 				const { user, subscriber } = await UserManagerCached.createUserAndSubscriberIfNeeded(
 					currentTelegramUser,
 					subscription.id,
