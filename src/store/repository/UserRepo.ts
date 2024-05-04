@@ -7,7 +7,7 @@ import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 export type User = typeof userSchema.$inferSelect;
 
 class UserRepo {
-	static async getUserByTelegramId(id: number): Promise<User> {
+	static async getUserByTelegramId(id: number): Promise<User | undefined> {
 		return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 	}
 
