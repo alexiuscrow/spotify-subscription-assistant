@@ -1,7 +1,7 @@
 import { Menu } from '@grammyjs/menu';
 import BotContext from '@/bot/BotContext';
 import invoicesCommand from '@/bot/command/invoices';
-import { SearchPageDirection } from '@/@types/db';
+import { SearchPageDirection } from '@/store/interfaces';
 import InvoiceManager from '@/manager/InvoiceManager';
 
 const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(async (ctx, range) => {

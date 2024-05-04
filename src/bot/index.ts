@@ -6,7 +6,7 @@ import BotContext, { SessionData } from '@/bot/BotContext';
 import { desc } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import loggerMiddleware from '@/bot/middleware/logger';
-import { SearchPageDirection } from '@/@types/db';
+import { SearchPageDirection } from '@/store/interfaces';
 
 let bot: Bot<BotContext> | null = null;
 

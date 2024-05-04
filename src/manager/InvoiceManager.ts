@@ -1,6 +1,6 @@
-import { StatementItem } from '@/@types/monobank';
+import { StatementItem } from '@/common-interfaces/monobank';
 import InvoiceRepo from '@/store/repository/InvoiceRepo';
-import { SearchCriteria, SearchPageDirection } from '@/@types/db';
+import { SearchCriteria, SearchPageDirection } from '@/store/interfaces';
 
 class InvoiceManager {
 	static async createInvoice(statementItem: StatementItem, subscriptionId: number) {

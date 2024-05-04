@@ -2,7 +2,7 @@ import { Menu } from '@grammyjs/menu';
 import BotContext from '@/bot/BotContext';
 import { invoice as invoiceSchema } from '@/store/schema/index';
 import myStatusCommand from '@/bot/command/my-status';
-import { SearchPageDirection } from '@/@types/db';
+import { SearchPageDirection } from '@/store/interfaces';
 import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import InvoiceManager from '@/manager/InvoiceManager';

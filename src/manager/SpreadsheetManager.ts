@@ -5,7 +5,7 @@ import {
 	SpreadsheetAllPaymentsByYear,
 	SpreadsheetSubscriber,
 	SpreadsheetPaymentsByYear
-} from '@/@types/spreadsheets';
+} from '@/common-interfaces/spreadsheets';
 import { DateTime } from 'luxon';
 import Schema$ValueRange = sheets_v4.Schema$ValueRange;
 

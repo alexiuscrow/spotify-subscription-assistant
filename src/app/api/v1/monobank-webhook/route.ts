@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { MonobankEvent, StatementItem, StatementItemWithAccount } from '@/@types/monobank';
+import { MonobankEvent, StatementItem, StatementItemWithAccount } from '@/common-interfaces/monobank';
 import SubscriptionManager from '@/manager/SubscriptionManager';
 import InvoiceManager from '@/manager/InvoiceManager';
 import { parseStringComment, subscriptionPaymentHashTag } from '@/bot/utils/paymentComment';

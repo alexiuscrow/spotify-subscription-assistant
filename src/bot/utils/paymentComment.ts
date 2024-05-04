@@ -1,4 +1,4 @@
-import { SubscriberPaymentComment } from '@/@types/monobank';
+import { SubscriberPaymentComment } from '@/common-interfaces/monobank';
 import { stringify, Options as StringifyOptions } from 'csv-stringify/sync';
 import { parse, Options as ParseOptions } from 'csv-parse/sync';
 

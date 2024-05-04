@@ -1,9 +1,9 @@
 import { invoice as invoiceSchema } from '@/store/schema';
 import { db } from '@/store/db';
-import { StatementItem } from '@/@types/monobank';
+import { StatementItem } from '@/common-interfaces/monobank';
 import { withPagination } from '@/store/utils';
 import { count, desc } from 'drizzle-orm';
-import { SearchCriteria, SearchPageDirection } from '@/@types/db';
+import { SearchCriteria, SearchPageDirection } from '@/store/interfaces';
 
 class InvoiceRepo {
 	static async createInvoice(statementItem: StatementItem, subscriptionId: number) {

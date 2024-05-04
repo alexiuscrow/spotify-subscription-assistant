@@ -1,4 +1,4 @@
-import { SearchCriteria, SearchPageDirection } from '@/@types/db';
+import { SearchCriteria, SearchPageDirection } from '@/store/interfaces';
 import { DateTime } from 'luxon';
 import InvoiceManager from '@/manager/InvoiceManager';
 import { invoice as invoiceSchema } from '@/store/schema/invoice';

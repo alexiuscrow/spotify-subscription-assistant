@@ -1,7 +1,7 @@
 import { db } from '@/store/db';
 import { count, eq } from 'drizzle-orm';
 import { subscriber, user } from '@/store/schema';
-import { SearchCriteria, SearchPageDirection } from '@/@types/db';
+import { SearchCriteria, SearchPageDirection } from '@/store/interfaces';
 import { withPagination } from '@/store/utils';
 import { User } from '@/store/repository/UserRepo';
 

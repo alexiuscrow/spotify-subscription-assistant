@@ -1,7 +1,7 @@
 import { Context, SessionFlavor } from 'grammy';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import { ColumnsSelection, SQL } from 'drizzle-orm';
-import { SearchPageDirection } from '@/@types/db';
+import { SearchPageDirection } from '@/store/interfaces';
 import { DateTime } from 'luxon';
 
 export interface Subscriber {

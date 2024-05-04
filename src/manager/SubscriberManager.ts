@@ -1,7 +1,7 @@
 import SubscriberRepo, { GetSubscriberOptions } from '@/store/repository/SubscriberRepo';
 import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import DebtManager from '@/manager/DebtManager';
-import { SearchCriteria } from '@/@types/db';
+import { SearchCriteria } from '@/store/interfaces';
 
 class SubscriberManager {
 	static async getSubscriberById(id: number, options?: GetSubscriberOptions) {
