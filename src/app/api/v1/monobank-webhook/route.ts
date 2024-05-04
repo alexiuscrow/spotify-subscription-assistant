@@ -9,7 +9,7 @@ import DebtManager from '@/manager/DebtManager';
 import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
 import UserManagerCached from '@/manager/cached/UserManagerCached';
 import SubscriptionManagerCached from '@/manager/cached/SubscriptionManagerCached';
-import InvoiceManagerCached from '@/manager/cached/InvoiceManagerCached';
+import InvoiceManager from '@/manager/InvoiceManager';
 
 export const POST = async (request: NextRequest) => {
 	const json = await request.json();
@@ -32,7 +32,7 @@ export const POST = async (request: NextRequest) => {
 const handleSpotifySubscriptionPayment = async (invoiceStatement: StatementItem) => {
 	const subscription = await SubscriptionManagerCached.getSubscription();
 	if (subscription) {
-		const { amount } = await InvoiceManagerCached.createInvoice(invoiceStatement, subscription.id);
+		const { amount } = await InvoiceManager.createInvoice(invoiceStatement, subscription.id);
 
 		logger.info(`New invoice created. Amount: ${amount}`);
 	} else {

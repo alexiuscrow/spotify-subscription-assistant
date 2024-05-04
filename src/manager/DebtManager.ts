@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { invoice as invoiceSchema } from '@/store/schema/invoice';
 import { gt } from 'drizzle-orm';
 import SubscriberHistoryManagerCached from '@/manager/cached/SubscriberHistoryManagerCached';
-import InvoiceManagerCached from '@/manager/cached/InvoiceManagerCached';
+import InvoiceManager from '@/manager/InvoiceManager';
 
 export interface Debt {
 	date: DateTime;
@@ -16,7 +16,7 @@ interface GetDebtsCriteria extends Omit<SearchCriteria, 'selection'> {
 
 class DebtManager {
 	static async getDebts(criteria: GetDebtsCriteria) {
-		const { items: invoices, pagination } = await InvoiceManagerCached.getInvoices({
+		const { items: invoices, pagination } = await InvoiceManager.getInvoices({
 			limit: criteria.limit,
 			page: criteria.page,
 			orderByColumns: criteria.orderByColumns,

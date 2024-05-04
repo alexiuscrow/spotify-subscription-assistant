@@ -4,11 +4,11 @@ import invoicePaginationMenu from '@/bot/menu/invoicePagination';
 import BotContext from '@/bot/BotContext';
 import generatePageLines from '@/bot/utils/page';
 import { markdownv2 } from 'telegram-format';
-import InvoiceManagerCached from '@/manager/cached/InvoiceManagerCached';
+import InvoiceManager from '@/manager/InvoiceManager';
 
 const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 	const sessionPagination = ctx.session.invoice.pagination;
-	const { items, pagination } = await InvoiceManagerCached.getInvoices({
+	const { items, pagination } = await InvoiceManager.getInvoices({
 		limit: sessionPagination.limit,
 		page: sessionPagination.page,
 		orderByColumns: sessionPagination.orderByColumns,
