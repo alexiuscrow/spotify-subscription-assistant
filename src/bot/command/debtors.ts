@@ -1,12 +1,12 @@
 import { Middleware } from 'grammy';
 import BotContext from '@/bot/BotContext';
 import SubscriberManager from '@/manager/SubscriberManager';
-import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import DebtManager from '@/manager/DebtManager';
 import { User } from '@/store/repository/UserRepo';
 import generatePageLines from '@/bot/utils/page';
 import { markdownv2 } from 'telegram-format';
 import googleSpreadsheetLinkMenu from '@/bot/menu/googleSpreadsheetLink';
+import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
 
 const debtorsCommand: Middleware<BotContext> = async ctx => {
 	const outputLines = [];
@@ -20,7 +20,7 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 
 	const subscribers = await SubscriberManager.getAllSubscribers({ with: { user: true } });
 	for (const subscriber of subscribers) {
-		const latestPaidDate = await SpreadsheetManager.getLatestPaidDate(subscriber.spreadsheetSubscriberIndex);
+		const latestPaidDate = await SpreadsheetManagerCached.getLatestPaidDate(subscriber.spreadsheetSubscriberIndex);
 		const subscriberDebts = await DebtManager.getAllDebts({ latestPaidDate });
 		const subscriberDebtsSum = await DebtManager.getDebtsSum({ debts: subscriberDebts });
 

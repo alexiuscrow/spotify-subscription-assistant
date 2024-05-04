@@ -7,16 +7,16 @@ import { gt } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import InvoiceManager from '@/manager/InvoiceManager';
 import DebtManager from '@/manager/DebtManager';
-import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import detailsForPaymentsCommand from '@/bot/command/details-for-payments';
 import { generateStringComment } from '@/bot/utils/paymentComment';
+import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
 
 const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ctx, range) => {
 	if (ctx.session.user?.role === 'admin' || !ctx.session.user?.subscriber) {
 		return;
 	}
 
-	const latestPaidDate = await SpreadsheetManager.getLatestPaidDate(
+	const latestPaidDate = await SpreadsheetManagerCached.getLatestPaidDate(
 		ctx.session.user.subscriber.spreadsheetSubscriberIndex
 	);
 

@@ -105,12 +105,14 @@ class SpreadsheetManager {
 		}, {} as SpreadsheetPaymentsByYear);
 	}
 
-	static async getPaymentsForAllYearsBySubscriber(subscriberSpreadsheetPosition: number) {
+	static async getPaymentsForAllYearsBySubscriber(
+		subscriberSpreadsheetPosition: number
+	): Promise<SpreadsheetPaymentsByYear> {
 		const sheetTitles = await SpreadsheetManager.getSheetTitles();
 		return SpreadsheetManager.getPaymentsFromSheetsBySubscriber(sheetTitles, subscriberSpreadsheetPosition);
 	}
 
-	static async getLatestPaidDate(subscriberSpreadsheetPosition: number) {
+	static async getLatestPaidDate(subscriberSpreadsheetPosition: number): Promise<DateTime | null> {
 		let latestPaidDate: DateTime | null = null;
 
 		const payments = await SpreadsheetManager.getPaymentsForAllYearsBySubscriber(subscriberSpreadsheetPosition);

@@ -5,11 +5,11 @@ import InvoiceManager from '@/manager/InvoiceManager';
 import { parseStringComment, subscriptionPaymentHashTag } from '@/bot/utils/paymentComment';
 import logger from '@/logger';
 import SubscriberManager from '@/manager/SubscriberManager';
-import SpreadsheetManager from '@/manager/SpreadsheetManager';
 import { getBot } from '@/bot';
 import { markdownv2 } from 'telegram-format';
 import UserManager from '@/manager/UserManager';
 import DebtManager from '@/manager/DebtManager';
+import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
 
 export const POST = async (request: NextRequest) => {
 	const json = await request.json();
@@ -66,7 +66,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 
 			const { user } = subscriber;
 
-			const latestWrotePaymentDate = await SpreadsheetManager.writePayments(
+			const latestWrotePaymentDate = await SpreadsheetManagerCached.writePayments(
 				subscriber.spreadsheetSubscriberIndex,
 				paidMonths
 			);

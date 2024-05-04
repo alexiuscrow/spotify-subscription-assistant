@@ -5,7 +5,7 @@ import debtPaginationMenu from '@/bot/menu/debtPagination';
 import logger from '@/logger';
 import generatePageLines from '@/bot/utils/page';
 import DebtManager from '@/manager/DebtManager';
-import SpreadsheetManager from '@/manager/SpreadsheetManager';
+import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
 
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
@@ -25,7 +25,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	const latestPaidDate =
 		ctx.session.debt.latestPaidDate !== undefined
 			? ctx.session.debt.latestPaidDate
-			: await SpreadsheetManager.getLatestPaidDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
+			: await SpreadsheetManagerCached.getLatestPaidDate(ctx.session.user.subscriber.spreadsheetSubscriberIndex);
 
 	if (latestPaidDate) {
 		outputLines.push(
