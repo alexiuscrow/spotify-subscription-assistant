@@ -1,8 +1,8 @@
 import { Middleware } from 'grammy';
 import BotContext, { Subscriber, UserSession } from '@/bot/BotContext';
-import UserManager from '@/manager/UserManager';
 import SubscriptionManager from '@/manager/SubscriptionManager';
 import SubscriberManager from '@/manager/SubscriberManager';
+import UserManagerCached from '@/manager/cached/UserManagerCached';
 
 const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (ctx.session.user) {
@@ -14,17 +14,17 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	}
 
 	const currentTelegramUser = ctx.from;
-	const storedUser = await UserManager.getUserByTelegramId(currentTelegramUser.id);
+	const storedUser = await UserManagerCached.getUserByTelegramId(currentTelegramUser.id);
 
 	if (!storedUser) {
-		const allowedUserCriteriaId = await UserManager.getAllowedUserCriteriaId(currentTelegramUser);
+		const allowedUserCriteriaId = await UserManagerCached.getAllowedUserCriteriaId(currentTelegramUser);
 		if (allowedUserCriteriaId === null) {
 			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
 			return;
 		} else {
 			try {
 				const subscription = await SubscriptionManager.getSubscription();
-				const { user, subscriber } = await UserManager.createUserAndSubscriberIfNeeded(
+				const { user, subscriber } = await UserManagerCached.createUserAndSubscriberIfNeeded(
 					currentTelegramUser,
 					subscription.id,
 					allowedUserCriteriaId
@@ -41,7 +41,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 		}
 	} else {
 		if (storedUser.status === 'canceled') {
-			await UserManager.updateUser(storedUser.id, { status: 'active' });
+			await UserManagerCached.updateUser(storedUser.id, { status: 'active' });
 			await ctx.reply('Ви відновили свій статус. З поверненням!');
 		}
 

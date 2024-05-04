@@ -7,11 +7,11 @@ import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
 export type User = typeof userSchema.$inferSelect;
 
 class UserRepo {
-	static async getUserByTelegramId(id: number) {
+	static async getUserByTelegramId(id: number): Promise<User> {
 		return db.query.user.findFirst({ where: eq(user.telegramId, id) });
 	}
 
-	static async getActiveAdminUsers() {
+	static async getActiveAdminUsers(): Promise<User[]> {
 		return db.query.user.findMany({ where: and(eq(user.role, 'admin'), eq(user.status, 'active')) });
 	}
 

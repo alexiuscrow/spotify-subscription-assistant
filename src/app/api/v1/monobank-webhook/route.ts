@@ -7,9 +7,9 @@ import logger from '@/logger';
 import SubscriberManager from '@/manager/SubscriberManager';
 import { getBot } from '@/bot';
 import { markdownv2 } from 'telegram-format';
-import UserManager from '@/manager/UserManager';
 import DebtManager from '@/manager/DebtManager';
 import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached';
+import UserManagerCached from '@/manager/cached/UserManagerCached';
 
 export const POST = async (request: NextRequest) => {
 	const json = await request.json();
@@ -112,7 +112,7 @@ const handleSubscriberPayment = async (invoiceStatement: StatementItem) => {
 				parse_mode: 'MarkdownV2'
 			});
 
-			const adminUsers = await UserManager.getActiveAdminUsers();
+			const adminUsers = await UserManagerCached.getActiveAdminUsers();
 
 			for (const adminUser of adminUsers) {
 				await bot.api.sendMessage(adminUser.telegramId, adminMessageLines.join('\n'), {

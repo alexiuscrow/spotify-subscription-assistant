@@ -9,7 +9,6 @@ class UserManager {
 		return UserRepo.getUserByTelegramId(id);
 	}
 
-	// TODO: Add cache
 	static async getAllowedUserCriteriaId(telegramUser: TelegramUser) {
 		return AllowedUserCriteriaRepo.getAllowedUserCriteriaId(telegramUser);
 	}
