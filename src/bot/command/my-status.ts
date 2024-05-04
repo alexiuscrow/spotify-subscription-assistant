@@ -10,14 +10,14 @@ import SpreadsheetManagerCached from '@/manager/cached/SpreadsheetManagerCached'
 const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 	if (ctx.session.user?.role === 'admin') {
 		logger.debug(
-			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, userRole: ${ctx.session.user?.role}`
+			`myStatusCommand: This command is available only for regular users, userRole: ${ctx.session.user?.role}`
 		);
-		return ctx.reply('Ця команда доступна тільки для звичайних користувачів.');
+		return ctx.reply(ctx.t('the-command-allowed-for-regular-users-only'));
 	} else if (!ctx.session.user?.subscriber) {
 		logger.debug(
-			`myStatusCommand: Ця команда доступна тільки для звичайних користувачів, subscriber: ${ctx.session.user?.subscriber}`
+			`myStatusCommand:This command is available only for regular users, subscriber: ${ctx.session.user?.subscriber}`
 		);
-		return ctx.reply('Щось пішло не так. Звернись до адміна.');
+		return ctx.reply(ctx.t('shit-happens'));
 	}
 
 	const outputLines = [];
@@ -29,10 +29,10 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	if (latestPaidDate) {
 		outputLines.push(
-			`Останній платіж було здійснено за період до ${markdownv2.bold(latestPaidDate.toFormat('dd MMMM, yyyy'))}`
+			ctx.t('last-payment-was-for-period', { date: markdownv2.bold(latestPaidDate.toFormat('dd MMMM, yyyy')) })
 		);
 	} else {
-		outputLines.push('Платежі не знайдені');
+		outputLines.push(ctx.t('payments-not-found'));
 	}
 
 	const debtSum = ctx.session.debt.sum || (await DebtManager.getDebtsSum({ latestPaidDate }));
@@ -52,26 +52,33 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 
 		outputLines.push(
 			...generatePageLines({
-				title: 'Несплачені рахунки',
+				title: ctx.t('not-payed-invoices'),
 				generatePaginationInfo: () =>
-					`Сторінка ${pagination.page} з ${pagination.totalPages}. Нарахування ${(debts as Array<object>).length} з ${pagination.total}.`,
+					ctx.t('pagination-info', {
+						page: pagination.page,
+						totalPages: pagination.totalPages,
+						numOfItemsOnPage: (debts as Array<object>).length,
+						totalItems: pagination.total
+					}),
 				items: debts,
 				generateItemInfo: ({ date, amount }: (typeof debts)[number]) => {
 					const endDate = date.setZone(process.env.LUXON_ZONE_NAME as string);
-					const formattedEndDate = endDate.toFormat('dd/LL/yy');
-					const formattedStartDate = endDate.minus({ month: 1 }).toFormat('dd/LL/yy');
-					return markdownv2.escape(`${formattedStartDate} - ${formattedEndDate} — ${String(amount)} грн`);
+					const formattedEndDate = endDate.toFormat(ctx.t('short-date-format'));
+					const formattedStartDate = endDate.minus({ month: 1 }).toFormat(ctx.t('short-date-format'));
+					return markdownv2.escape(
+						`${formattedStartDate} - ${formattedEndDate} — ${String(amount)} ${ctx.t('currency')}`
+					);
 				},
 				dataAfterItemList: [
-					`Сума несплачених нарахувань: ${debtSum} грн`,
+					ctx.t('sum-of-not-payed-invoices', { debtSum }),
 					'',
-					markdownv2.italic(`${markdownv2.escape('*')} Всі нарахування округлені до 1 гривні`)
+					markdownv2.italic(`${markdownv2.escape('*')} ${ctx.t('payment-rounded-to-1')}`)
 				],
 				showPaginationTips: isPaginationMenuWillBeShowed
 			})
 		);
 	} else {
-		outputLines.push('Всі нарахування сплачені\\.');
+		outputLines.push(markdownv2.escape(ctx.t('all-invoices-payed')));
 	}
 
 	const responseMsg = outputLines.join('\n');

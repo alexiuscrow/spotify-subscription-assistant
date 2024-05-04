@@ -3,6 +3,7 @@ import { PgColumn } from 'drizzle-orm/pg-core';
 import { ColumnsSelection, SQL } from 'drizzle-orm';
 import { SearchPageDirection } from '@/store/interfaces';
 import { DateTime } from 'luxon';
+import { I18nFlavor } from '@grammyjs/i18n';
 
 export interface Subscriber {
 	id: number;
@@ -44,6 +45,6 @@ export interface SessionData {
 	};
 }
 
-type BotContext = Context & SessionFlavor<SessionData>;
+type BotContext = Context & I18nFlavor & SessionFlavor<SessionData>;
 
 export default BotContext;
