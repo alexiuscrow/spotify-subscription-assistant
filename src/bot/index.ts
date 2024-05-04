@@ -7,6 +7,7 @@ import { desc } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import loggerMiddleware from '@/bot/middleware/logger';
 import { SearchPageDirection } from '@/store/interfaces';
+import { I18n } from '@grammyjs/i18n';
 
 let bot: Bot<BotContext> | null = null;
 
@@ -19,8 +20,6 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 	if (!token) throw new Error('TELEGRAM_TOKEN is unset');
 
 	bot = new Bot<BotContext>(token);
-
-	bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 
 	function initial(): SessionData {
 		return {
@@ -43,8 +42,13 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 		};
 	}
 
-	bot.use(session({ initial }));
+	const i18n = new I18n<BotContext>({
+		defaultLocale: 'uk',
+		directory: process.cwd() + '/src/bot/locales'
+	});
 
+	bot.use(i18n);
+	bot.use(session({ initial }));
 	bot.use(loggerMiddleware);
 	bot.use(authenticatorMiddleware);
 	bot.use(menuComposer);

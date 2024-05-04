@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google-cloud/logging-winston": "6.0.0",
+    "@grammyjs/i18n": "1.0.2",
     "@grammyjs/menu": "1.2.1",
     "@next/env": "14.1.0",
     "@vercel/postgres": "0.8.0",
