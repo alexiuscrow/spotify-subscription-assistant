@@ -37,11 +37,10 @@ currency = грн
 # Menu
 
 ## debtPagination
-previous-nav-button = ⬅️ Попередні
-next-nav-button = Наступні ➡️
 pay-all-button = 💳 Сплатити все
 payment-details-button = 💳 Реквізити для оплати
 
 ## common
-
+previous-nav-button = ⬅️ Попередні
+next-nav-button = Наступні ➡️
 google-sheets-link = 👀 Платежі у Google таблиці

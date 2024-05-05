@@ -13,7 +13,7 @@ const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(asy
 	});
 
 	if (hasPrev) {
-		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
+		range.text(ctx.t('previous-nav-button'), (ctx: BotContext, next) => {
 			if (ctx.session.invoice.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.invoice.pagination.page--;
 			else ctx.session.invoice.pagination.page++;
@@ -22,7 +22,7 @@ const invoicePagination = new Menu<BotContext>('invoice-pagination').dynamic(asy
 		});
 	}
 	if (hasNext) {
-		range.text('Наступні ➡️', (ctx: BotContext, next) => {
+		range.text(ctx.t('next-nav-button'), (ctx: BotContext, next) => {
 			if (ctx.session.invoice.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.invoice.pagination.page++;
 			else ctx.session.invoice.pagination.page--;
