@@ -18,15 +18,20 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 	const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
 
 	const outputLines = generatePageLines({
-		title: 'Платежі за підписку',
+		title: ctx.t('payments-for-subscription'),
 		generatePaginationInfo: () =>
-			`Сторінка ${pagination.page} з ${pagination.totalPages}. Списання ${(items as Array<object>).length} з ${pagination.total}.`,
+			ctx.t('pagination-info-payments', {
+				page: pagination.page,
+				totalPages: pagination.totalPages,
+				numOfItemsOnPage: (items as Array<object>).length,
+				totalItems: pagination.total
+			}),
 		items,
 		generateItemInfo: ({ createdAt, amount }: (typeof items)[number]) => {
 			const dateString = DateTime.fromJSDate(createdAt)
 				.setZone(process.env.LUXON_ZONE_NAME as string)
-				.toFormat('dd/LL/yy, HH:mm');
-			return markdownv2.escape(`${dateString} — ${amount} грн`);
+				.toFormat(ctx.t('short-datetime-format'));
+			return markdownv2.escape(`${dateString} — ${amount} ${ctx.t('currency')}`);
 		},
 		showPaginationTips: isPaginationMenuNeeded
 	});

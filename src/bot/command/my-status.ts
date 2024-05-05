@@ -54,7 +54,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 			...generatePageLines({
 				title: ctx.t('not-payed-invoices'),
 				generatePaginationInfo: () =>
-					ctx.t('pagination-info', {
+					ctx.t('pagination-info-invoices', {
 						page: pagination.page,
 						totalPages: pagination.totalPages,
 						numOfItemsOnPage: (debts as Array<object>).length,
