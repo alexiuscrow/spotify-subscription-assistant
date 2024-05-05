@@ -8,6 +8,7 @@ import { invoice as invoiceSchema } from '@/store/schema';
 import loggerMiddleware from '@/bot/middleware/logger';
 import { SearchPageDirection } from '@/store/interfaces';
 import { I18n } from '@grammyjs/i18n';
+import path from 'path';
 
 let bot: Bot<BotContext> | null = null;
 
@@ -44,7 +45,7 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 
 	const i18n = new I18n<BotContext>({
 		defaultLocale: 'uk',
-		directory: process.cwd() + '/src/bot/locales'
+		directory: path.join(process.cwd(), '/src/bot/locales')
 	});
 
 	bot.use(i18n);
