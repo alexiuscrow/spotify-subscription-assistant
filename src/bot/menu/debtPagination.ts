@@ -36,7 +36,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 	});
 
 	if (hasPrev) {
-		range.text('⬅️ Попередні', (ctx: BotContext, next) => {
+		range.text(ctx.t('previous-nav-button'), (ctx: BotContext, next) => {
 			if (ctx.session.debt.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.debt.pagination.page--;
 			else ctx.session.debt.pagination.page++;
@@ -45,7 +45,7 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 		});
 	}
 	if (hasNext) {
-		range.text('Наступні ➡️', (ctx: BotContext, next) => {
+		range.text(ctx.t('next-nav-button'), (ctx: BotContext, next) => {
 			if (ctx.session.debt.pagination.pageDirection === SearchPageDirection.STRAIGHT)
 				ctx.session.debt.pagination.page++;
 			else ctx.session.debt.pagination.page--;
@@ -65,15 +65,18 @@ const debtPagination = new Menu<BotContext>('debt-pagination').dynamic(async (ct
 				firstName
 			} = ctx.session.user;
 			const paymentComment = encodeURIComponent(generateStringComment({ subscriberId, firstName }));
-			range.url('💳 Сплатити все', `${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`);
+			range.url(
+				ctx.t('pay-all-button'),
+				`${process.env.MONOBANK_PAYMENT_LINK}?amount=${debtSum}&text=${paymentComment}`
+			);
 		} else {
-			range.text('💳 Реквізити для оплати', detailsForPaymentsCommand);
+			range.text(ctx.t('payment-details-button'), detailsForPaymentsCommand);
 		}
 	}
 
 	range.row();
 	range.url(
-		'👀 Платежі у Google таблиці',
+		ctx.t('google-sheets-link'),
 		`https://docs.google.com/spreadsheets/d/${process.env.LOG_GOOGLE_SHEETSPREAD_ID}/edit?usp=sharing`
 	);
 });
