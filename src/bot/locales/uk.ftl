@@ -41,4 +41,7 @@ previous-nav-button = ⬅️ Попередні
 next-nav-button = Наступні ➡️
 pay-all-button = 💳 Сплатити все
 payment-details-button = 💳 Реквізити для оплати
+
+## common
+
 google-sheets-link = 👀 Платежі у Google таблиці
