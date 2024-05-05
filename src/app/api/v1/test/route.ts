@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import SubscriberManager from '@/manager/SubscriberManager';
+import { promises as fs } from 'fs';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-	const { searchParams } = new URL(request.url);
-	const withUser = searchParams.get('user') === 'true';
-	const subscriber = await SubscriberManager.getAllSubscribers({ with: { user: withUser } });
+	const file = await fs.readFile(process.cwd() + '/src/bot/locales/uk.ftl', 'utf8');
 
-	return NextResponse.json({ subscriber });
+	return NextResponse.json({ file });
 }
