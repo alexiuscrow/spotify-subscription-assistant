@@ -1,6 +1,6 @@
 the-command-allowed-for-regular-users-only = Ця команда доступна тільки для звичайних користувачів.
 shit-happens = Щось пішло не так. Звернись до адміна.
-last-payment-was-for-period = Останній платіж було здійснено за період до {$date} :\)
+last-payment-was-for-period = Останній платіж було здійснено за період до {$date}
 payments-not-found = Платежі не знайдені
 not-payed-invoices = Несплачені рахунки
 pagination-info = Сторінка {$page} з {$totalPages}. Нарахування {$numOfItemsOnPage} з ${$totalItems}.
