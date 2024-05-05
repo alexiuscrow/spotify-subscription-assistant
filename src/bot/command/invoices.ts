@@ -17,7 +17,7 @@ const invoicesCommand: MiddlewareFn<BotContext> = async ctx => {
 
 	const isPaginationMenuNeeded = pagination.hasPrev || pagination.hasNext;
 
-	const outputLines = generatePageLines({
+	const outputLines = generatePageLines(ctx, {
 		title: ctx.t('payments-for-subscription'),
 		generatePaginationInfo: () =>
 			ctx.t('pagination-info-payments', {

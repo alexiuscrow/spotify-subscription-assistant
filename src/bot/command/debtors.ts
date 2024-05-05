@@ -37,7 +37,7 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 
 	if (debtsInfo.length) {
 		outputLines.push(
-			...generatePageLines({
+			...generatePageLines(ctx, {
 				title: ctx.t('debtors-title'),
 				items: debtsInfo,
 				generateItemInfo: ({ user, sum, monthNumber }, index) => {

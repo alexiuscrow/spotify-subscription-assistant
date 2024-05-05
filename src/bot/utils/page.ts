@@ -1,4 +1,5 @@
 import { markdownv2 } from 'telegram-format';
+import { I18nFlavor } from '@grammyjs/i18n';
 
 interface Page<T> {
 	title: string;
@@ -9,7 +10,7 @@ interface Page<T> {
 	dataAfterItemList?: string | string[];
 }
 
-const generatePageLines = <T>(page: Page<T>) => {
+const generatePageLines = <T>(ctx: I18nFlavor, page: Page<T>) => {
 	const {
 		title,
 		generatePaginationInfo,
@@ -45,11 +46,7 @@ const generatePageLines = <T>(page: Page<T>) => {
 
 	if (showPaginationTips) {
 		output.push('');
-		output.push(
-			markdownv2.italic(
-				markdownv2.escape('*') + ' Для перегляду попередніх або наступних платежів використовуйте кнопки нижче'
-			)
-		);
+		output.push(markdownv2.italic(markdownv2.escape('*') + ` ${ctx.t('pagination-tips')}`));
 	}
 
 	return output;

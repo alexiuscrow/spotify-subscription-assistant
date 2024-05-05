@@ -51,7 +51,7 @@ const myStatusCommand: MiddlewareFn<BotContext> = async ctx => {
 		const isPaginationMenuWillBeShowed = pagination.hasPrev || pagination.hasNext;
 
 		outputLines.push(
-			...generatePageLines({
+			...generatePageLines(ctx, {
 				title: ctx.t('not-payed-invoices'),
 				generatePaginationInfo: () =>
 					ctx.t('pagination-info-invoices', {
