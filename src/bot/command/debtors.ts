@@ -12,7 +12,7 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 	const outputLines = [];
 
 	if (ctx.session.user?.role !== 'admin') {
-		outputLines.push('Ця команда доступна тільки для адміністраторів.');
+		outputLines.push(ctx.t('command-only-admin'));
 		return ctx.reply(outputLines.join('\n'));
 	}
 
@@ -38,17 +38,17 @@ const debtorsCommand: Middleware<BotContext> = async ctx => {
 	if (debtsInfo.length) {
 		outputLines.push(
 			...generatePageLines({
-				title: 'Дебітори',
+				title: ctx.t('debtors-title'),
 				items: debtsInfo,
 				generateItemInfo: ({ user, sum, monthNumber }, index) => {
 					const fullName = user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
 					const userMention = markdownv2.userMention(markdownv2.escape(fullName), user.telegramId);
-					return `${index + 1}\\. ${userMention} ${markdownv2.escape(`- ${sum} грн (${monthNumber} міс.)`)}`;
+					return markdownv2.escape(ctx.t('subscriber-debts-info', { index: index + 1, userMention, sum, monthNumber }));
 				}
 			})
 		);
 	} else {
-		outputLines.push(markdownv2.escape(`У всіх зареєстрованих підписників (${subscribers.length}) немає боргів.`));
+		outputLines.push(markdownv2.escape(ctx.t('no-debts', { subscribersCount: subscribers.length })));
 	}
 
 	await ctx.reply(outputLines.join('\n'), {
