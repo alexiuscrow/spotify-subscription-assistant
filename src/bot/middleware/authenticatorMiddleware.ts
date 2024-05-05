@@ -19,7 +19,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 	if (!storedUser) {
 		const allowedUserCriteriaId = await UserManagerCached.getAllowedUserCriteriaId(currentTelegramUser);
 		if (allowedUserCriteriaId === null) {
-			await ctx.reply('Уявлення не маю хто ти. Якщо ти вважаєш, що це помилка, звернись до адміна.');
+			await ctx.reply(ctx.t('no-user-information'));
 			return;
 		} else {
 			try {
@@ -32,17 +32,17 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 				ctx.session.user = user as UserSession;
 				ctx.session.user.subscriber = subscriber as Subscriber;
 			} catch (e) {
-				await ctx.reply('Щось пішло не так. Звернись до адміна');
-				if (typeof e === 'string') return ctx.reply('Помилка: ' + e);
-				else if (e instanceof Error) return ctx.reply('Помилка: ' + e.toString());
+				await ctx.reply(ctx.t('error-occurred'));
+				if (typeof e === 'string') return ctx.reply(`${ctx.t('error-reported')} ` + e);
+				else if (e instanceof Error) return ctx.reply(`${ctx.t('error-reported')}: ` + e.toString());
 			}
 
-			await ctx.reply('Автентифікацію пройдено. Ласкаво просимо!');
+			await ctx.reply(ctx.t('authentication-complete'));
 		}
 	} else {
 		if (storedUser.status === 'canceled') {
 			await UserManagerCached.updateUser(storedUser.id, { status: 'active' });
-			await ctx.reply('Ви відновили свій статус. З поверненням!');
+			await ctx.reply(ctx.t('status-restored'));
 		}
 
 		storedUser.status = 'active';
@@ -51,7 +51,7 @@ const authenticatorMiddleware: Middleware<BotContext> = async (ctx, next) => {
 		if (storedUser.role !== 'admin') {
 			const subscriber = await SubscriberManager.getSubscriberByUserId(storedUser.id);
 			if (!subscriber) {
-				await ctx.reply('Щось пішло не так. Звернись до адміна.');
+				await ctx.reply(ctx.t('error-occurred'));
 				return;
 			}
 
