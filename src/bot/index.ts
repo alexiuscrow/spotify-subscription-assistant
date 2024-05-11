@@ -51,7 +51,7 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 	bot.use(i18n);
 	bot.use(session({ initial }));
 	bot.use(loggerMiddleware);
-	bot.use(authenticatorMiddleware);
+	// bot.use(authenticatorMiddleware);
 	bot.use(menuComposer);
 	bot.use(commands);
 
