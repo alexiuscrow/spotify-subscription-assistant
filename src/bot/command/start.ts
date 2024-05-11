@@ -9,6 +9,7 @@ const startCommand: Middleware<BotContext> = async ctx => {
 		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
 	];
 
+	// noinspection TypeScriptValidateTypes
 	await ctx.api.setMyCommands(commands);
 };
 
