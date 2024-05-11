@@ -1,9 +1,10 @@
 import { Context, SessionFlavor } from 'grammy';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { ColumnsSelection, SQL } from 'drizzle-orm';
+import { ColumnsSelection, desc, SQL } from 'drizzle-orm';
 import { SearchPageDirection } from '@/store/interfaces';
 import { DateTime } from 'luxon';
 import { I18nFlavor } from '@grammyjs/i18n';
+import { invoice as invoiceSchema } from '@/store/schema';
 
 export interface Subscriber {
 	id: number;
@@ -46,5 +47,24 @@ export interface SessionData {
 }
 
 type BotContext = Context & I18nFlavor & SessionFlavor<SessionData>;
+
+export const initiateSession = (): SessionData => ({
+	invoice: {
+		pagination: {
+			limit: 12,
+			page: 1,
+			orderByColumns: [desc(invoiceSchema.createdAt)],
+			pageDirection: SearchPageDirection.REVERSE
+		}
+	},
+	debt: {
+		pagination: {
+			limit: 12,
+			page: 1,
+			orderByColumns: [desc(invoiceSchema.createdAt)],
+			pageDirection: SearchPageDirection.REVERSE
+		}
+	}
+});
 
 export default BotContext;

@@ -2,11 +2,8 @@ import { Bot, session } from 'grammy';
 import commands from '@/bot/command';
 import authenticatorMiddleware from '@/bot/middleware/authenticatorMiddleware';
 import menuComposer from '@/bot/menu';
-import BotContext, { SessionData } from '@/bot/BotContext';
-import { desc } from 'drizzle-orm';
-import { invoice as invoiceSchema } from '@/store/schema';
+import BotContext, { initiateSession } from '@/bot/BotContext';
 import loggerMiddleware from '@/bot/middleware/logger';
-import { SearchPageDirection } from '@/store/interfaces';
 import { I18n } from '@grammyjs/i18n';
 import path from 'path';
 
@@ -22,34 +19,13 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 
 	bot = new Bot<BotContext>(token);
 
-	function initial(): SessionData {
-		return {
-			invoice: {
-				pagination: {
-					limit: 12,
-					page: 1,
-					orderByColumns: [desc(invoiceSchema.createdAt)],
-					pageDirection: SearchPageDirection.REVERSE
-				}
-			},
-			debt: {
-				pagination: {
-					limit: 12,
-					page: 1,
-					orderByColumns: [desc(invoiceSchema.createdAt)],
-					pageDirection: SearchPageDirection.REVERSE
-				}
-			}
-		};
-	}
-
 	const i18n = new I18n<BotContext>({
 		defaultLocale: 'uk',
 		directory: path.join(process.cwd(), '/src/bot/locales')
 	});
 
 	bot.use(i18n);
-	bot.use(session({ initial }));
+	bot.use(session({ initial: initiateSession }));
 	bot.use(loggerMiddleware);
 	bot.use(authenticatorMiddleware);
 	bot.use(menuComposer);
