@@ -3,8 +3,8 @@ import startCommand from '@/bot/command/start';
 import detailsForPaymentsCommand from '@/bot/command/details-for-payments';
 import invoicesCommand from '@/bot/command/invoices';
 import myStatusCommand from '@/bot/command/my-status';
-import BotContext from '@/bot/BotContext';
 import debtorsCommand from '@/bot/command/debtors';
+import BotContext from '@/bot/BotContext';
 
 const commandComposer = new Composer<BotContext>();
 
