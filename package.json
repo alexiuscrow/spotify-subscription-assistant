@@ -21,7 +21,7 @@
     "drizzle-orm": "0.30.10",
     "env-cmd": "10.1.0",
     "googleapis": "134.0.0",
-    "grammy": "1.21.1",
+    "grammy": "1.23.0",
     "luxon": "3.4.4",
     "next": "14.1.0",
     "node-cache": "5.1.2",

@@ -10,10 +10,10 @@ dependencies:
     version: 6.0.0(winston@3.12.0)
   '@grammyjs/i18n':
     specifier: 1.0.2
-    version: 1.0.2(grammy@1.21.1)
+    version: 1.0.2(grammy@1.23.0)
   '@grammyjs/menu':
     specifier: 1.2.1
-    version: 1.2.1(grammy@1.21.1)
+    version: 1.2.1(grammy@1.23.0)
   '@next/env':
     specifier: 14.1.0
     version: 14.1.0
@@ -36,8 +36,8 @@ dependencies:
     specifier: 134.0.0
     version: 134.0.0
   grammy:
-    specifier: 1.21.1
-    version: 1.21.1
+    specifier: 1.23.0
+    version: 1.23.0
   luxon:
     specifier: 3.4.4
     version: 3.4.4
@@ -704,7 +704,7 @@ packages:
     engines: {node: '>=14'}
     dev: false
 
-  /@grammyjs/i18n@1.0.2(grammy@1.21.1):
+  /@grammyjs/i18n@1.0.2(grammy@1.23.0):
     resolution: {integrity: sha512-F/6jBB+afp8N3aXLmxTqdlffqD20EZBMFrPiVQNz6YoiKvjAe4Q8rSrU0Y4eQXkUj4e+UNl7yvYvvPSa1h4guw==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -713,20 +713,25 @@ packages:
       '@deno/shim-deno': 0.18.2
       '@fluent/bundle': 0.17.1
       '@fluent/langneg': 0.6.2
-      grammy: 1.21.1
+      grammy: 1.23.0
     dev: false
 
-  /@grammyjs/menu@1.2.1(grammy@1.21.1):
+  /@grammyjs/menu@1.2.1(grammy@1.23.0):
     resolution: {integrity: sha512-0LV9A/UukfF46N0ceSqG1RbdCjhvB2u1MNHNkE7eRD3GVlffOBnR+MS2ESE9mSBleT9OjRV6imA7QZ57QBktOQ==}
     engines: {node: '>=12.20.0 || >=14.13.1'}
     peerDependencies:
       grammy: ^1.0.0
     dependencies:
-      grammy: 1.21.1
+      grammy: 1.23.0
     dev: false
 
   /@grammyjs/types@3.5.2:
     resolution: {integrity: sha512-KZlJcOdgD8N6SMIHWfwmb11L5/L2+rptWBxCexbzNCry/wfLXFFGFniyUrySnvFo+cWMxgy5GuImwY3mhUrP8g==}
+    dev: true
+
+  /@grammyjs/types@3.7.0:
+    resolution: {integrity: sha512-/q8XVwSB7LrN1w1RSaUffO6gYyi5PHOBq1cbLHqDYiy994BxDKVD5N18viWac8Z014UGG2X+s9Fgs7cxsr0q8g==}
+    dev: false
 
   /@grpc/grpc-js@1.10.3:
     resolution: {integrity: sha512-qiO9MNgYnwbvZ8MK0YLWbnGrNX3zTcj6/Ef7UHu5ZofER3e2nF3Y35GaPo9qNJJ/UJQKa4KL+z/F4Q8Q+uCdUQ==}
@@ -2805,11 +2810,11 @@ packages:
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  /grammy@1.21.1:
-    resolution: {integrity: sha512-gXHHU83yffHtxutuQlyefClFZN+3bZrmGXYcKVAE2R9SSNlnW9ohF4dC7omn6gHhBoZNRiRS4kumiFc12sal3A==}
+  /grammy@1.23.0:
+    resolution: {integrity: sha512-yCogmYpbSgtSBDb8rpsFmIWGWqAqtnkrkfJCiB7BSU0hIMYiVz5KsYMlte2UFc7l0izm4zbP8d9j6QpREy0JGw==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
-      '@grammyjs/types': 3.5.2
+      '@grammyjs/types': 3.7.0
       abort-controller: 3.0.0
       debug: 4.3.4
       node-fetch: 2.7.0
