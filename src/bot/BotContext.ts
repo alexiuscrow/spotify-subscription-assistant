@@ -47,7 +47,8 @@ export interface SessionData {
 	};
 }
 
-type BotContext = Context & I18nFlavor & CommandsFlavor & SessionFlavor<SessionData>;
+export type BotContextWithoutCommandsFlavor = Context & I18nFlavor & SessionFlavor<SessionData>;
+type BotContext = CommandsFlavor<BotContextWithoutCommandsFlavor> & BotContextWithoutCommandsFlavor;
 
 export const initiateSession = (): SessionData => ({
 	invoice: {
