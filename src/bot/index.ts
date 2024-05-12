@@ -7,6 +7,7 @@ import loggerMiddleware from '@/bot/middleware/logger';
 import { I18n } from '@grammyjs/i18n';
 import path from 'path';
 import commandsDescriptionMiddleware from '@/bot/middleware/commandsDescriptionMiddleware';
+import { commands as grammyjsCommands } from '@grammyjs/commands';
 
 let bot: Bot<BotContext> | null = null;
 
@@ -27,6 +28,7 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 
 	bot.use(i18n);
 	bot.use(session({ initial: initiateSession }));
+	bot.use(grammyjsCommands());
 	bot.use(commandsDescriptionMiddleware);
 	bot.use(loggerMiddleware);
 	bot.use(authenticatorMiddleware);
