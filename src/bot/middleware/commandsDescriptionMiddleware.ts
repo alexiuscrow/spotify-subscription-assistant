@@ -5,7 +5,7 @@ import BotContext from '@/bot/BotContext';
 import { Commands } from '@grammyjs/commands';
 
 const commandsDescriptionMiddleware: Middleware<BotContext> = async (ctx, next) => {
-	const cmds = new Commands<BotContext>();
+	const cmds = new Commands();
 
 	cmds
 		.command('invoices', 'Списання за підписку')
