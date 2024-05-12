@@ -34,6 +34,11 @@ subscriber-debts-info = - { $sum } грн ({ $monthNumber } міс.)
 ## common
 currency = грн
 
+# Command descriptions
+command-desc-invoices = Списання за підписку
+command-desc-my-status = Мої платежі
+command-desc-details-for-payments = Реквізити для платежів
+
 # Menu
 
 ## debtPagination
