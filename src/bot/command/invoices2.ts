@@ -1,12 +1,12 @@
 import { CommandContext, MiddlewareFn } from 'grammy';
 import { DateTime } from 'luxon';
 import invoicePaginationMenu from '@/bot/menu/invoicePagination';
-import BotContext from '@/bot/BotContext';
+import { BotContextWithoutCommandsFlavor } from '@/bot/BotContext';
 import generatePageLines from '@/bot/utils/page';
 import { markdownv2 } from 'telegram-format';
 import InvoiceManager from '@/manager/InvoiceManager';
 
-const invoicesCommand: MiddlewareFn<CommandContext<BotContext>> = async ctx => {
+const invoicesCommand: MiddlewareFn<CommandContext<BotContextWithoutCommandsFlavor>> = async ctx => {
 	const sessionPagination = ctx.session.invoice.pagination;
 	const { items, pagination } = await InvoiceManager.getInvoices({
 		limit: sessionPagination.limit,
