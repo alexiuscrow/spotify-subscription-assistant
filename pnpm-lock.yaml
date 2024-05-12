@@ -8,6 +8,9 @@ dependencies:
   '@google-cloud/logging-winston':
     specifier: 6.0.0
     version: 6.0.0(winston@3.12.0)
+  '@grammyjs/commands':
+    specifier: 0.6.1
+    version: 0.6.1
   '@grammyjs/i18n':
     specifier: 1.0.2
     version: 1.0.2(grammy@1.23.0)
@@ -702,6 +705,16 @@ packages:
   /@google-cloud/promisify@4.0.0:
     resolution: {integrity: sha512-Orxzlfb9c67A15cq2JQEyVc7wEsmFBmHjZWZYQMUyJ1qivXyMwdyNOs9odi79hze+2zqdTtu1E19IM/FtqZ10g==}
     engines: {node: '>=14'}
+    dev: false
+
+  /@grammyjs/commands@0.6.1:
+    resolution: {integrity: sha512-pTSm3YHoRsMwCr20/tziY+PAeZgbkbWrABbN+Qc3cB52t+BujtWdH+pRDy50tXoPSpUbKvbiwgNbSCksNbMeTQ==}
+    dependencies:
+      grammy: 1.23.0
+      ts-pattern: 5.1.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
     dev: false
 
   /@grammyjs/i18n@1.0.2(grammy@1.23.0):
@@ -4268,6 +4281,10 @@ packages:
     dependencies:
       typescript: 5.3.3
     dev: true
+
+  /ts-pattern@5.1.1:
+    resolution: {integrity: sha512-i+owkHr5RYdQxj8olUgRrqpiWH9x27PuWVfXwDmJ/n/CoF/SAa7WW1i2oUpPDMQpJ4U+bGRUcZkVq7i1m3zFCg==}
+    dev: false
 
   /tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}

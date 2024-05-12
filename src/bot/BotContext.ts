@@ -5,6 +5,7 @@ import { SearchPageDirection } from '@/store/interfaces';
 import { DateTime } from 'luxon';
 import { I18nFlavor } from '@grammyjs/i18n';
 import { invoice as invoiceSchema } from '@/store/schema';
+import { CommandsFlavor } from '@grammyjs/commands';
 
 export interface Subscriber {
 	id: number;
@@ -46,7 +47,7 @@ export interface SessionData {
 	};
 }
 
-type BotContext = Context & I18nFlavor & SessionFlavor<SessionData>;
+type BotContext = Context & I18nFlavor & CommandsFlavor & SessionFlavor<SessionData>;
 
 export const initiateSession = (): SessionData => ({
 	invoice: {
