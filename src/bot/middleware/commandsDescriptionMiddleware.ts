@@ -6,9 +6,11 @@ import invoicesCommand from '@/bot/command/invoices2';
 const commandsDescriptionMiddleware: MiddlewareFn<BotContext> = async (ctx, next) => {
 	const cmds = new Commands<BotContextWithoutCommandsFlavor>();
 
+	// noinspection TypeScriptValidateTypes
 	cmds
 		.command('invoices', 'Списання за підписку!!!', invoicesCommand)
-		.localize('en', 'invoices', 'Subscription charges!!!');
+		.localize('en', 'invoices', 'Subscription charges!!!')
+		.addToScope({ type: 'all_private_chats' }, []);
 
 	await ctx.setMyCommands(cmds);
 	await next();
