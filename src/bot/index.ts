@@ -1,5 +1,4 @@
 import { Bot, session } from 'grammy';
-import commands from '@/bot/command';
 import authenticatorMiddleware from '@/bot/middleware/authenticatorMiddleware';
 import menuComposer from '@/bot/menu';
 import BotContext, { initiateSession } from '@/bot/BotContext';
@@ -7,6 +6,7 @@ import loggerMiddleware from '@/bot/middleware/logger';
 import { I18n } from '@grammyjs/i18n';
 import path from 'path';
 import commandsDescriptionMiddleware from '@/bot/middleware/commandsDescriptionMiddleware';
+import { commands } from '@grammyjs/commands';
 
 let bot: Bot<BotContext> | null = null;
 
@@ -27,7 +27,7 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 
 	bot.use(i18n);
 	bot.use(session({ initial: initiateSession }));
-	bot.use(commands);
+	bot.use(commands());
 	bot.use(commandsDescriptionMiddleware);
 	bot.use(loggerMiddleware);
 	bot.use(authenticatorMiddleware);
