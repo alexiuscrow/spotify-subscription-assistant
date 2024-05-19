@@ -11,7 +11,7 @@ const commonConfig: Config = {
 	schema: './src/store/schema/index.ts',
 	dialect: 'postgresql',
 	dbCredentials: {
-		url: process.env.POSTGRES_URL
+		url: process.env.POSTGRES_URL as string
 	},
 	verbose: true,
 	schemaFilter: ['ssa_prod', 'ssa_dev']
