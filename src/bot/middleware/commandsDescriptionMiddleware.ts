@@ -10,7 +10,7 @@ const commandsDescriptionMiddleware: MiddlewareFn<BotContext> = async (ctx, next
 	cmds
 		.command('invoices', 'Списання за підписку!!!', invoicesCommand)
 		.localize('en', 'invoices', 'Subscription charges!!!')
-		.addToScope({ type: 'all_private_chats' }, []);
+		.addToScope({ type: 'all_private_chats' }, invoicesCommand);
 
 	await ctx.setMyCommands(cmds);
 	await next();
