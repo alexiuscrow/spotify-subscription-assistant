@@ -1,0 +1,1 @@
+DROP TABLE "ssa_dev"."payment";

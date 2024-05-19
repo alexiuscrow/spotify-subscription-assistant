@@ -3,10 +3,10 @@ import { relations } from 'drizzle-orm';
 import { invoice } from '@/store/schema/invoice';
 import { subscriber } from '@/store/schema/subscriber';
 import { subscriberHistory } from '@/store/schema/subscriberHistory';
-import { pgTable } from '@/store/utils';
+import { mySchema } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
-export const subscription = pgTable('subscription', {
+export const subscription = mySchema.table('subscription', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull()
 });

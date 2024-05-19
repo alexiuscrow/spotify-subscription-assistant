@@ -1,0 +1,20 @@
+{
+  "version": "6",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1716118279021,
+      "tag": "0000_flat_namor",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1716145867446,
+      "tag": "0001_famous_dragon_man",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,11 +1,11 @@
-import { PgColumn, PgSelect, pgTableCreator, unique as drizzleUnique } from 'drizzle-orm/pg-core';
+import { PgColumn, pgSchema, PgSelect, unique as drizzleUnique } from 'drizzle-orm/pg-core';
 import { SQL } from 'drizzle-orm';
 
 const projectPrefix = 'ssa';
-const isProduction = process.env.VERCEL_ENV === 'production';
-const env = isProduction ? 'prod' : 'dev';
+export const isProductionFn = () => process.env.VERCEL_ENV === 'production';
+const env = isProductionFn() ? 'prod' : 'dev';
 
-export const pgTable = pgTableCreator(name => `${projectPrefix}_${env}_${name}`);
+export const mySchema = pgSchema(`${projectPrefix}_${env}`);
 export const unique = (name: string) => drizzleUnique(`${projectPrefix}_${env}_${name}`);
 
 export const withPagination = <T extends PgSelect>(

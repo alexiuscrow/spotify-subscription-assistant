@@ -1,0 +1,430 @@
+{
+  "id": "cc0094b2-7007-4b69-9492-a46e554a34fe",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "ssa_dev.user": {
+      "name": "user",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "telegram_id": {
+          "name": "telegram_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "user_role",
+          "typeSchema": "ssa_dev",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'regular'"
+        },
+        "status": {
+          "name": "status",
+          "type": "user_status",
+          "typeSchema": "ssa_dev",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_telegram_id_unique": {
+          "name": "user_telegram_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "telegram_id"
+          ]
+        }
+      }
+    },
+    "ssa_dev.subscriber": {
+      "name": "subscriber",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscription_id": {
+          "name": "subscription_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spreadsheet_subscriber_index": {
+          "name": "spreadsheet_subscriber_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "subscriber_user_id_user_id_fk": {
+          "name": "subscriber_user_id_user_id_fk",
+          "tableFrom": "subscriber",
+          "tableTo": "user",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "subscriber_subscription_id_subscription_id_fk": {
+          "name": "subscriber_subscription_id_subscription_id_fk",
+          "tableFrom": "subscriber",
+          "tableTo": "subscription",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ssa_dev_unique_pair_userid_subscription_id": {
+          "name": "ssa_dev_unique_pair_userid_subscription_id",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "subscription_id"
+          ]
+        }
+      }
+    },
+    "ssa_dev.subscription": {
+      "name": "subscription",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ssa_dev.invoice": {
+      "name": "invoice",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subscription_id": {
+          "name": "subscription_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operation_amount": {
+          "name": "operation_amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency_code": {
+          "name": "currency_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "invoice_subscription_id_subscription_id_fk": {
+          "name": "invoice_subscription_id_subscription_id_fk",
+          "tableFrom": "invoice",
+          "tableTo": "subscription",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ssa_dev.payment": {
+      "name": "payment",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subscriber_id": {
+          "name": "subscriber_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payment_subscriber_id_subscriber_id_fk": {
+          "name": "payment_subscriber_id_subscriber_id_fk",
+          "tableFrom": "payment",
+          "tableTo": "subscriber",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "subscriber_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ssa_dev.allowed_user_criteria": {
+      "name": "allowed_user_criteria",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "telegram_id": {
+          "name": "telegram_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ssa_dev.allowed_user_subscription_props": {
+      "name": "allowed_user_subscription_props",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "allowed_user_criteria_id": {
+          "name": "allowed_user_criteria_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spreadsheet_subscriber_index": {
+          "name": "spreadsheet_subscriber_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "allowed_user_subscription_props_allowed_user_criteria_id_allowed_user_criteria_id_fk": {
+          "name": "allowed_user_subscription_props_allowed_user_criteria_id_allowed_user_criteria_id_fk",
+          "tableFrom": "allowed_user_subscription_props",
+          "tableTo": "allowed_user_criteria",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "allowed_user_criteria_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ssa_dev.subscriber_history": {
+      "name": "subscriber_history",
+      "schema": "ssa_dev",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subscription_id": {
+          "name": "subscription_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "total": {
+          "name": "total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "subscriber_history_subscription_id_subscription_id_fk": {
+          "name": "subscriber_history_subscription_id_subscription_id_fk",
+          "tableFrom": "subscriber_history",
+          "tableTo": "subscription",
+          "schemaTo": "ssa_dev",
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "ssa_dev.user_role": {
+      "name": "user_role",
+      "schema": "ssa_dev",
+      "values": [
+        "regular",
+        "admin"
+      ]
+    },
+    "ssa_dev.user_status": {
+      "name": "user_status",
+      "schema": "ssa_dev",
+      "values": [
+        "active",
+        "canceled"
+      ]
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

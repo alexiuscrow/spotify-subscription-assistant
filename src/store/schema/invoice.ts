@@ -1,10 +1,10 @@
 import { decimal, integer, serial, timestamp } from 'drizzle-orm/pg-core';
 import { subscription } from '@/store/schema/subscription';
 import { relations } from 'drizzle-orm';
-import { pgTable } from '@/store/utils';
+import { mySchema } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
-export const invoice = pgTable('invoice', {
+export const invoice = mySchema.table('invoice', {
 	id: serial('id').primaryKey(),
 	subscriptionId: integer('subscription_id')
 		.notNull()

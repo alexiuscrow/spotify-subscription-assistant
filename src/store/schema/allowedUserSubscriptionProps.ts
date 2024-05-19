@@ -1,9 +1,9 @@
 import { integer, serial } from 'drizzle-orm/pg-core';
 import { allowedUserCriteria } from '@/store/schema/allowedUserCriteria';
-import { pgTable } from '@/store/utils';
+import { mySchema } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
-export const allowedUserSubscriptionProps = pgTable('allowed_user_subscription_props', {
+export const allowedUserSubscriptionProps = mySchema.table('allowed_user_subscription_props', {
 	id: serial('id').primaryKey(),
 	allowedUserCriteriaId: integer('allowed_user_criteria_id')
 		.notNull()

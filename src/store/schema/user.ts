@@ -1,13 +1,13 @@
-import { bigint, pgEnum, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { bigint, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { subscriber } from '@/store/schema/subscriber';
 import { relations } from 'drizzle-orm';
-import { pgTable } from '@/store/utils';
+import { mySchema } from '@/store/utils';
 
-export const userRoleEnum = pgEnum('user_role', ['regular', 'admin']);
-export const userStatusEnum = pgEnum('user_status', ['active', 'canceled']);
+export const userRoleEnum = mySchema.enum('user_role', ['regular', 'admin']);
+export const userStatusEnum = mySchema.enum('user_status', ['active', 'canceled']);
 
 // noinspection TypeScriptValidateTypes
-export const user = pgTable('user', {
+export const user = mySchema.table('user', {
 	id: serial('id').primaryKey(),
 	telegramId: bigint('telegram_id', { mode: 'number' }).notNull().unique(),
 	username: text('username'),

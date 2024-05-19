@@ -2,11 +2,10 @@ import { integer, serial } from 'drizzle-orm/pg-core';
 import { user } from '@/store/schema/user';
 import { subscription } from '@/store/schema/subscription';
 import { relations } from 'drizzle-orm';
-import { payment } from '@/store/schema/payment';
-import { pgTable, unique } from '@/store/utils';
+import { mySchema, unique } from '@/store/utils';
 
 // noinspection TypeScriptValidateTypes
-export const subscriber = pgTable(
+export const subscriber = mySchema.table(
 	'subscriber',
 	{
 		id: serial('id').primaryKey(),
@@ -23,7 +22,7 @@ export const subscriber = pgTable(
 	})
 );
 
-export const subscriberRelations = relations(subscriber, ({ one, many }) => ({
+export const subscriberRelations = relations(subscriber, ({ one }) => ({
 	subscription: one(subscription, {
 		fields: [subscriber.subscriptionId],
 		references: [subscription.id]
@@ -31,6 +30,5 @@ export const subscriberRelations = relations(subscriber, ({ one, many }) => ({
 	user: one(user, {
 		fields: [subscriber.userId],
 		references: [user.id]
-	}),
-	payments: many(payment)
+	})
 }));

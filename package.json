@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg"
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@google-cloud/logging-winston": "6.0.0",
@@ -38,7 +38,7 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "7.1.0",
     "@typescript-eslint/parser": "7.1.0",
-    "drizzle-kit": "0.20.14",
+    "drizzle-kit": "0.21.2",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "eslint-config-prettier": "9.1.0",
