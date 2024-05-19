@@ -7,6 +7,7 @@ import { desc } from 'drizzle-orm';
 import { invoice as invoiceSchema } from '@/store/schema';
 import loggerMiddleware from '@/bot/middleware/logger';
 import { SearchPageDirection } from '@/store/interfaces';
+import { BotCommand } from '@grammyjs/types';
 
 let bot: Bot<BotContext> | null = null;
 
@@ -67,6 +68,14 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 			'підписку кожного користувача, розраховувати суму, яку необхідно сплатити, а також автоматично фіксує списання за ' +
 			'підписку Spotify. '
 	);
+
+	const commandDescriptions: BotCommand[] = [
+		{ command: 'my_status', description: 'Мої платежі' },
+		{ command: 'invoices', description: 'Списання за підписку' },
+		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
+	];
+
+	await bot.api.setMyCommands(commandDescriptions);
 
 	return bot;
 };
