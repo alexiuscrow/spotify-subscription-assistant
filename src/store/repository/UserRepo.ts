@@ -45,7 +45,8 @@ class UserRepo {
 					where: eq(allowedUserSubscriptionProps.allowedUserCriteriaId, allowedUserCriteriaId)
 				});
 
-				if (!subscriberProps?.spreadsheetSubscriberIndex) throw new Error('Spreadsheet subscriber index not found');
+				if (isNaN(<number>subscriberProps?.spreadsheetSubscriberIndex))
+					throw new Error('Spreadsheet subscriber index not found');
 
 				type NewSubscriber = typeof subscriberSchema.$inferInsert;
 				subscriber = (
@@ -54,7 +55,7 @@ class UserRepo {
 						.values({
 							userId: user.id,
 							subscriptionId: subscriptionId,
-							spreadsheetSubscriberIndex: subscriberProps.spreadsheetSubscriberIndex
+							spreadsheetSubscriberIndex: subscriberProps?.spreadsheetSubscriberIndex
 						} as NewSubscriber)
 						.returning()
 				)[0];
