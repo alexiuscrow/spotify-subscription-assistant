@@ -22,9 +22,9 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 	bot = new Bot<BotContext>(token);
 
 	const commandDescriptions: BotCommand[] = [
-		{ command: 'my_status_', description: 'Мої платежі' },
-		{ command: 'invoices_', description: 'Списання за підписку' },
-		{ command: 'details_for_payments_', description: 'Реквізити для платежів' }
+		{ command: 'my_status', description: 'Мої платежі' },
+		{ command: 'invoices', description: 'Списання за підписку' },
+		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
 	];
 
 	await bot.api.setMyCommands(commandDescriptions);
