@@ -4,7 +4,7 @@ import { markdownv2 } from 'telegram-format';
 
 const startCommand: Middleware<BotContext> = async ctx => {
 	const outputLines = [
-		markdownv2.bold('Вам наступні наступні команди:'),
+		markdownv2.bold('Можете скористатись наступними командами:'),
 		'',
 		markdownv2.escape('/my_status — Стан ваших платежів та заборгованності'),
 		'',
