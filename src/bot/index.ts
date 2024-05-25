@@ -21,6 +21,14 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 
 	bot = new Bot<BotContext>(token);
 
+	const commandDescriptions: BotCommand[] = [
+		{ command: 'my_status', description: 'Мої платежі' },
+		{ command: 'invoices', description: 'Списання за підписку' },
+		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
+	];
+
+	await bot.api.setMyCommands(commandDescriptions);
+
 	bot.on(':file', async ctx => ctx.reply('Бот підтримує тільки текстові повідомлення.'));
 
 	function initial(): SessionData {
@@ -62,14 +70,6 @@ export const getBot = async (): Promise<Bot<BotContext>> => {
 			.map(item => `‣ ${item}`)
 			.join('\n')
 	);
-
-	const commandDescriptions: BotCommand[] = [
-		{ command: 'my_status', description: 'Мої платежі' },
-		{ command: 'invoices', description: 'Списання за підписку' },
-		{ command: 'details_for_payments', description: 'Реквізити для платежів' }
-	];
-
-	await bot.api.setMyCommands(commandDescriptions);
 
 	return bot;
 };
